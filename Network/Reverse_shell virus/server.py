@@ -7,7 +7,7 @@ FORMAT='UTF-8'
 list_of_clients=[]
 client_counter=0
 
-def connectiona_accepter():
+def connection_accepter():
     global client_counter
     print("server is starting")
     server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -23,7 +23,7 @@ def connectiona_accepter():
 
 
 def start():
-    connection_thread=threading.Thread(target=connectiona_accepter)
+    connection_thread=threading.Thread(target=connection_accepter)
     connection_thread.start()
     x=0
     while 1:
