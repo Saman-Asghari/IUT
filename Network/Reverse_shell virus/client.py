@@ -13,8 +13,8 @@ def background():
     client.connect((HOST,PORT))
     print("connectd sucssefully!!")
     while True:
-        y=0
-        y=y+1
+        request=client.recv(1024).decode('UTF-8')
+        print(request)
 
 def front():
     root=tk.Tk()
