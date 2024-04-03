@@ -56,7 +56,7 @@ def sending_the_command(index:int,massage:str):
     temp=list_of_clients[index]
     temp.sendall(massage.encode(FORMAT))
 
-    
+
 
 def reciving_the_result(index:int):
     global list_of_clients
