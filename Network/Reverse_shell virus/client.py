@@ -15,6 +15,8 @@ def background():
     while True:
         request=client.recv(1024).decode('UTF-8')
         print(request)
+        to_be_sent=input().encode('UTF-8')
+        client.sendall(to_be_sent)
 
 def front():
     root=tk.Tk()
@@ -32,8 +34,7 @@ def start():
     background_thread.start()
     front_thread=threading.Thread(target=front)
     front_thread.start()
-    while 1:
-        pass
+    
 
 
 start()

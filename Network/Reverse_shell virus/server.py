@@ -2,11 +2,15 @@ import socket
 import threading
 from typing import List
 
+
+
 HOST=socket.gethostbyname(socket.gethostname())
 PORT=12345
 FORMAT='UTF-8'
 list_of_clients:List[socket.socket]=[]
 client_counter=0
+
+
 
 def connection_accepter():
     global client_counter
@@ -46,15 +50,19 @@ def getting_the_user_index():
 
 
 
-def sending_the_command(index,massage:str):
-    print(f'the sent massage is {massage} to client number {index}')
+def sending_the_command(index:int,massage:str):
+    global list_of_clients
+    print(f'the sent massage is {massage} to client number {index+1}')
     temp=list_of_clients[index]
     temp.sendall(massage.encode(FORMAT))
-    
-    
 
     
-    
+
+def reciving_the_result(index:int):
+    global list_of_clients
+    temp=list_of_clients[index]
+    data=temp.recv(1024).decode(FORMAT)
+    print(data)
 
 
 
@@ -70,6 +78,7 @@ def program_handler():
             comm=getting_a_command()
             ind=getting_the_user_index()
             sending_the_command(ind-1,comm)
+            reciving_the_result(ind-1)
         if(choice==3):
             pass
         if(choice==4):
