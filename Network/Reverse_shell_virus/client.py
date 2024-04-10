@@ -28,11 +28,11 @@ def run_command(command:str):
 def downloading_a_file(_request:str):
     words=_request.split()
     print(words[1])
+    final_name_manipulating=words[1].split("\\")
+    final_name=final_name_manipulating[-1]
     file=open(words[1],"rb")
-   # length=len('client_'+words[1])
-    print('client_'+words[1])
-    name='client_'+words[1]
-    #client.send(str(length).encode())
+    print('client_'+final_name)
+    name='client_'+final_name
     client.send(name.encode())
     time.sleep(1)
     data=file.read()

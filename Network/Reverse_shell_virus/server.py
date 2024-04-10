@@ -48,6 +48,10 @@ def getting_the_user_index():
     index=int(input())
     return index
 
+def getting_the_destination():
+    print("enter the file destination")
+    des=input()
+    return des
 
 
 def sending_the_command(index:int,massage:str):
@@ -71,7 +75,6 @@ def getting_the_file_name():
 
 
 
-
 def sending_download_request(index:int,_file_name:str):
     global list_of_clients
     print(f'the requsted file is {_file_name} to client number {index+1}')
@@ -80,12 +83,12 @@ def sending_download_request(index:int,_file_name:str):
 
 
 
-def reciving_the_file(index:int):
+def reciving_the_file(index:int,destination=str):
     global list_of_clients
     temp=list_of_clients[index]
     file_name=temp.recv(1024).decode(FORMAT)
     print(file_name)
-    file=open(file_name,"wb")
+    file=open(destination+file_name,"wb")
     file_bytes=b""
     done=False
     while not done:
@@ -99,8 +102,6 @@ def reciving_the_file(index:int):
     file.write(file_bytes)
     file.close()
     print("file closed")
-
-
 
 
 
@@ -120,9 +121,10 @@ def program_handler():
             reciving_the_result(ind-1)
         if(choice==3):
             file_name=getting_the_file_name()
+            destination=getting_the_destination()
             ind=getting_the_user_index()
             sending_download_request(ind-1,file_name) 
-            reciving_the_file(ind-1)           
+            reciving_the_file(ind-1,destination)           
         if(choice==4):
             pass
 
