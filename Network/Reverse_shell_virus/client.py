@@ -40,6 +40,7 @@ def uploading_a_file(_request:str):
             file_bytes +=data
             if file_bytes[-5:]==b"<END>":
                 done=True
+    file_bytes=file_bytes[:-5]
     file.write(file_bytes)
     file.close()
     print("file closed")

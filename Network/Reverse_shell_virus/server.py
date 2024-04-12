@@ -119,6 +119,7 @@ def reciving_the_file(index:int,destination=str):
             file_bytes +=data
             if file_bytes[-5:]==b"<END>":
                 done=True
+    file_bytes=file_bytes[:-5]
     file.write(file_bytes)
     file.close()
     print("file closed")
