@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <TextBox x:Name="AssemblySource" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="245" Height="392"/>
+        <Button x:Name="SaveAC" Content="Enter" HorizontalAlignment="Left" Height="17" Margin="54,407,0,0" VerticalAlignment="Top" Width="78" Click="SaveAC_Click"/>
 
     </Grid>
 </Window>
