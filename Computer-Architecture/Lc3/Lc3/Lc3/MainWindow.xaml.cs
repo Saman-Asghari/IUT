@@ -124,7 +124,43 @@ namespace Lc3
                     InstructionAddresses.Add(CurrentLane, Result);
                     DecodedCode += Result;
                 }
-                if (WordsForEachLine[0]=="")
+                if (WordsForEachLine[0].Contains("BR"))
+                {
+                    CurrentLane++;
+                    string Result = DecodingBr(WordsForEachLine,CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "JMP")
+                {
+                    CurrentLane++;
+                    string Result = DecodingJmp(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "RET")
+                {
+                    CurrentLane++;
+                    string Result = "1100000111000000";
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "JSR")
+                {
+                    CurrentLane++;
+                    string Result = DecodingJsr(WordsForEachLine,CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "JSRR")
+                {
+                    CurrentLane++;
+                    string Result = DecodingJsrr(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                
+                
                 DecodedCode = DecodedCode + "\n";
             }
 
@@ -220,6 +256,17 @@ namespace Lc3
         {
             string Temp = Str.Replace(part, "");
             return Temp;
+        }
+        static string ConvertTo11BitBinary(int number)
+        {
+            if (number < -1024 || number > 1023)
+                throw new ArgumentOutOfRangeException(nameof(number), "Number must be between -1024 and 1023 inclusive.");
+            if (number < 0)
+            {
+                number = (1 << 11) + number; // This adds 2048 to the negative number to wrap it within 11 bits
+            }
+            string binaryString = Convert.ToString(number, 2).PadLeft(11, '0');
+            return binaryString;
         }
         static string ConvertTo6BitBinary(int number)
         {
@@ -472,6 +519,70 @@ namespace Lc3
                     Result += ConvertHexTo6BitBinary(temp3);
                 }
             }
+            return Result;
+        }
+
+        private string DecodingBr(List<string> Words,int line)
+        {
+            string Result = "0000", temp1, temp2;
+            int tempnum1, tempnum2;
+            if (Words[0].Contains("n"))
+            {
+                Result += "1";
+            }
+            else
+            {
+                Result += "0";
+            }
+            if (Words[0].Contains("z"))
+            {
+                Result += "1";
+            }
+            else
+            {
+                Result += "0";
+            }
+            if (Words[0].Contains("p"))
+            {
+                Result += "1";
+            }
+            else
+            {
+                Result += "0";
+            }
+            int lineresult = LabelAddresses[Words[1]].Item1 - line;
+            Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        
+        private string DecodingJmp(List<string> Words)
+        {
+            string Result = "1100000", temp1;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            Result += "000000";
+            return Result;
+        }
+
+        private string DecodingJsr(List<string> Words,int line)
+        {
+            string Result = "01001", temp1;
+            int tenmpnum1;
+            int lineresult = LabelAddresses[Words[1]].Item1 - line;
+            Result += ConvertTo11BitBinary(lineresult);
+            return Result;
+        }
+
+        private string DecodingJsrr(List<string> Words)
+        {
+            string Result = "0100000", temp1;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            Result += "000000";
             return Result;
         }
     }
