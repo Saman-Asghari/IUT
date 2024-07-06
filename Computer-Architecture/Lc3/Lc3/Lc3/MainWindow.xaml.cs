@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.VisualBasic.FileIO;
+using System.Configuration;
 
 namespace Lc3
 {
@@ -35,6 +36,7 @@ namespace Lc3
         private void SaveAC_Click(object sender, RoutedEventArgs e)
         {
             LabelAddresses = new Dictionary<string,Tuple<int, int?>>();
+            InstructionAddresses = new Dictionary<int, string>();
             string Text=AssemblySource.Text;
             Lines= Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             Decode(Lines);
@@ -42,9 +44,9 @@ namespace Lc3
         private void Decode(string[] lines)
         {
             FindingLabels(lines);
-            for(int i = 0; i < lines.Count(); i++)
+            for(int i = 0; i < Lines.Count(); i++)
             {
-                List<string> WordsForEachLine = SplitString(lines[i]);  //specify the words in each line
+                List<string> WordsForEachLine = SplitString(Lines[i]);  //specify the words in each line
                 if (WordsForEachLine[0] == "ORG")
                 {
                     int TempNumber = Convert.ToInt32(DeletePartOfString(WordsForEachLine[1], "x"), 16);
@@ -54,17 +56,38 @@ namespace Lc3
                 }
                 if (WordsForEachLine[0] == "ADD")
                 {
-                    string Result=DecodingAdd(WordsForEachLine);
-                    InstructionAddresses.Add(CurrentLane, Result);
-                    DecodedCode += Result;
                     CurrentLane++;
+                    string Result =DecodingAdd(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);              //saving the address
+                    DecodedCode += Result;
                 }
                 if (WordsForEachLine[0] == "AND")
                 {
+                    CurrentLane++;               
                     string Result = DecodingAnd(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);    //saving the address
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "NOT")
+                {
+                    CurrentLane++;
+                    string Result = DecodingNot(WordsForEachLine);
                     InstructionAddresses.Add(CurrentLane, Result);
                     DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "LD")
+                {
                     CurrentLane++;
+                    string Result = DecodingLd(WordsForEachLine,CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "LDI")
+                {
+                    CurrentLane++;
+                    string Result = DecodingLdi(WordsForEachLine, CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
                 }
                 DecodedCode = DecodedCode + "\n";
             }
@@ -81,6 +104,7 @@ namespace Lc3
                     int TempNumber = Convert.ToInt32(DeletePartOfString(WordsForEachLine[1],"x"), 16);
                     CurrentLane = TempNumber;
                     CurrentLane--;
+                    continue;
                 }
                 if (!(Instructions.Contains(WordsForEachLine[0])))  //found label
                 {
@@ -106,6 +130,10 @@ namespace Lc3
                     }
                     Lines[i] = DeletePartOfString(Lines[i], WordsForEachLine[0]);                    
 
+                }
+                else
+                {
+                    CurrentLane++;
                 }
 
                 
@@ -156,6 +184,17 @@ namespace Lc3
         {
             string Temp = Str.Replace(part, "");
             return Temp;
+        }
+        static string ConvertTo9BitBinary(int number)
+        {
+            if (number < -256 || number > 255)
+                throw new ArgumentOutOfRangeException(nameof(number), "Number must be between -256 and 255 inclusive.");
+            if (number < 0)
+            {
+                number = (1 << 9) + number;
+            }
+            string binaryString = Convert.ToString(number, 2).PadLeft(9, '0');
+            return binaryString;
         }
         private string DecodingAdd(List<string> Words)
         {
@@ -248,6 +287,41 @@ namespace Lc3
                 }
 
             }
+            return Result;
+        }
+        private string DecodingNot(List<string> Words)
+        {
+            string Result = "1001",temp1,temp2;
+            int tempnum1, tempnum2;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            temp2 = DeletePartOfString(Words[2], "R");
+            tempnum2 = int.Parse(temp2);
+            Result += ConvertTo3BitBinary(tempnum2);
+            Result += "111111";
+            return Result;
+        }
+        private string DecodingLd(List<string> Words,int line)
+        {
+            string Result="0010", temp1, temp2;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            int lineresult = LabelAddresses[Words[2]].Item1 - line;
+            Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        private string DecodingLdi(List<string> Words, int line)
+        {
+            string Result = "1010", temp1, temp2;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            int lineresult = LabelAddresses[Words[2]].Item1 - line;  // in this first i find the value of the key in fact the line address of the label then i subtract it from pc so then i can add it to pc
+            Result += ConvertTo9BitBinary(lineresult);
             return Result;
         }
     }
