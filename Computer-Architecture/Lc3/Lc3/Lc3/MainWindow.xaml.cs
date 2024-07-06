@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.VisualBasic.FileIO;
 using System.Configuration;
+using System.Buffers;
 
 namespace Lc3
 {
@@ -192,11 +193,11 @@ namespace Lc3
                     {
                         if (WordsForEachLine[1] == "HEX")
                         {
-                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
+                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2],16)));
                         }
                         if (WordsForEachLine[1] == "BIN")
                         {
-                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
+                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2],2)));
                         }
                         if (WordsForEachLine[1] == "DEC")
                         {
@@ -615,7 +616,27 @@ namespace Lc3
                     case "1001":
                         ExcuteNot(InstructionAddresses[PC]);
                         break;
-
+                    case "0010":
+                        ExcuteLd(InstructionAddresses[PC]);
+                        break;
+                    case "1010":
+                        ExcuteLdi(InstructionAddresses[PC]);
+                        break;
+                    case "0110":
+                        ExcuteLdr(InstructionAddresses[PC]);
+                        break;
+                    case "1110":
+                        ExcuteLea(InstructionAddresses[PC]);
+                        break;
+                    case "0011":
+                        ExcuteSt(InstructionAddresses[PC]);
+                        break;
+                    case "1011":
+                        ExcuteSti(InstructionAddresses[PC]);
+                        break;
+                    case "0111":
+                        ExcuteStr(InstructionAddresses[PC]);
+                        break;
                         
 
                 }
@@ -685,7 +706,154 @@ namespace Lc3
             PC++;
             return ;
         }
+        
+        private void ExcuteLd(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string PCoffset= Instruction.Substring(7, 9);
+            int labelAddress=PC+Convert.ToInt32(PCoffset, 2);
+            int? TempNumber=null;
+            foreach(var kvp in LabelAddresses)
+            {
+                if(kvp.Value.Item1 == labelAddress)
+                {
+                    TempNumber=kvp.Value.Item2;
+                }
+            }
+            R[DRreg] = (int)TempNumber;
+            SetCC(R[DRreg]);
+            PC++;
+            return;
+        }
+        private void ExcuteLdi(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string PCoffset = Instruction.Substring(7, 9);
+            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int? TempNumber = null;
+            int? TempNumber2 = null;
+            foreach (var kvp in LabelAddresses)
+            {
+                if (kvp.Value.Item1 == labelAddress)
+                {
+                    TempNumber = kvp.Value.Item2;
+                }
+            }
 
+            foreach (var kvp2 in LabelAddresses) 
+            {
+                if( kvp2.Value.Item1 == TempNumber)
+                {
+                    TempNumber2=kvp2.Value.Item2;
+                }
+            }
+            R[DRreg] = (int)TempNumber2;
+            SetCC(R[DRreg]);
+            PC++;
+            return;
+        }
+        private void ExcuteLdr(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string BaseReg = Instruction.Substring(7, 3);
+            int Basereg = Convert.ToInt32(BaseReg, 2);
+            string offset= Instruction.Substring(10, 6);
+            int offsetNumber = Convert.ToInt32(offset, 2);
+            int? TempNumber = null;
+            foreach(var kvp in LabelAddresses) 
+            {
+                if (kvp.Value.Item1 == R[Basereg] + offsetNumber)
+                {
+                    TempNumber=kvp.Value.Item2;
+                }
+            }
+            R[DRreg]= (int)TempNumber;
+            SetCC(R[DRreg]);
+            PC++;
+            return;
+        }
+
+        private void ExcuteLea(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string PCoffset = Instruction.Substring(7, 9);
+            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            R[DRreg]= (int)labelAddress;
+            PC++;
+            return;
+        }
+        private void ExcuteSt(string Instruction)
+        {
+            string SR = Instruction.Substring(4, 3);
+            int SRreg = Convert.ToInt32(SR, 2);
+            string PCoffset = Instruction.Substring(7, 9);
+            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int SearchValue=PC+labelAddress;
+            int? help = R[SRreg];
+            foreach (var key in new List<string>(LabelAddresses.Keys))
+            {
+                var tupleValue = LabelAddresses[key];
+                if (tupleValue.Item1 == SearchValue)
+                {
+                    LabelAddresses[key] = Tuple.Create(tupleValue.Item1,help);
+                }
+            }
+            PC++;
+            return;
+        }
+
+        private void ExcuteSti(string Instruction)
+        {
+            string SR = Instruction.Substring(4, 3);
+            int SRreg = Convert.ToInt32(SR, 2);
+            string PCoffset = Instruction.Substring(7, 9);
+            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int? TempNumber = null;
+            int? help = R[SRreg];
+            foreach (var kvp in LabelAddresses)
+            {
+                if (kvp.Value.Item1 == labelAddress)
+                {
+                    TempNumber = kvp.Value.Item2;
+                }
+            }
+            int? SearchValue = TempNumber;
+            foreach (var key in new List<string>(LabelAddresses.Keys))
+            {
+                var tupleValue = LabelAddresses[key];
+                if (tupleValue.Item1 == SearchValue)
+                {
+                    LabelAddresses[key] = Tuple.Create(tupleValue.Item1, help);
+                }
+            }
+            PC ++;
+            return;
+        }
+
+        private void ExcuteStr(string Instruction)
+        {
+            string SR = Instruction.Substring(4, 3);
+            int SRreg = Convert.ToInt32(SR, 2);
+            string BaseReg = Instruction.Substring(7, 3);
+            int Basereg = Convert.ToInt32(BaseReg, 2);
+            string offset = Instruction.Substring(10, 6);
+            int offsetNumber = Convert.ToInt32(BaseReg, 2);
+            int? help = R[SRreg];
+            int TempNumber =offsetNumber+R[Basereg];
+            int SearchValue = TempNumber;
+            foreach (var key in new List<string>(LabelAddresses.Keys))
+            {
+                var tupleValue = LabelAddresses[key];
+                if (tupleValue.Item1 == SearchValue)
+                {
+                    LabelAddresses[key] = Tuple.Create(tupleValue.Item1, help);
+                }
+            }
+        }
         private void SetCC(int Result)
         {
             if(Result == 0)
