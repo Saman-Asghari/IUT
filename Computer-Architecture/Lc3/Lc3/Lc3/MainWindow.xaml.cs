@@ -23,7 +23,8 @@ namespace Lc3
         List<string> DataLabels = new List<string> { "DEC", "BIN", "HEX" }; 
         string DecodedCode = "";  //hold the last result here
         int CurrentLane = 0;    //used for handling org instruction
-        Dictionary<string,Tuple<int,int?>> LabelAdresses;   //a map for holding the lables
+        Dictionary<string,Tuple<int,int?>> LabelAddresses;   //a map for holding the lables
+        Dictionary<int, string> InstructionAddresses;
         string[] Lines;   //specially global for deleting the labels from it
 
         public MainWindow()
@@ -33,7 +34,7 @@ namespace Lc3
 
         private void SaveAC_Click(object sender, RoutedEventArgs e)
         {
-            LabelAdresses = new Dictionary<string,Tuple<int, int?>>();
+            LabelAddresses = new Dictionary<string,Tuple<int, int?>>();
             string Text=AssemblySource.Text;
             Lines= Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             Decode(Lines);
@@ -41,6 +42,33 @@ namespace Lc3
         private void Decode(string[] lines)
         {
             FindingLabels(lines);
+            for(int i = 0; i < lines.Count(); i++)
+            {
+                List<string> WordsForEachLine = SplitString(lines[i]);  //specify the words in each line
+                if (WordsForEachLine[0] == "ORG")
+                {
+                    int TempNumber = Convert.ToInt32(DeletePartOfString(WordsForEachLine[1], "x"), 16);
+                    CurrentLane = TempNumber;
+                    CurrentLane--;
+                    continue;
+                }
+                if (WordsForEachLine[0] == "ADD")
+                {
+                    string Result=DecodingAdd(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                    CurrentLane++;
+                }
+                if (WordsForEachLine[0] == "AND")
+                {
+                    string Result = DecodingAnd(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                    CurrentLane++;
+                }
+                DecodedCode = DecodedCode + "\n";
+            }
+
         }
         private void FindingLabels(string[] lines)
         {
@@ -52,6 +80,7 @@ namespace Lc3
                 {
                     int TempNumber = Convert.ToInt32(DeletePartOfString(WordsForEachLine[1],"x"), 16);
                     CurrentLane = TempNumber;
+                    CurrentLane--;
                 }
                 if (!(Instructions.Contains(WordsForEachLine[0])))  //found label
                 {
@@ -60,20 +89,20 @@ namespace Lc3
                     {
                         if (WordsForEachLine[1] == "HEX")
                         {
-                            LabelAdresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
+                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
                         }
                         if (WordsForEachLine[1] == "BIN")
                         {
-                            LabelAdresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
+                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
                         }
                         if (WordsForEachLine[1] == "DEC")
                         {
-                            LabelAdresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
+                            LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, Convert.ToInt32(WordsForEachLine[2])));
                         }
                     }
                     else   //it is a function label
                     {
-                        LabelAdresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, null));
+                        LabelAddresses.Add(WordsForEachLine[0], new Tuple<int, int?>(CurrentLane, null));
                     }
                     Lines[i] = DeletePartOfString(Lines[i], WordsForEachLine[0]);                    
 
@@ -127,6 +156,99 @@ namespace Lc3
         {
             string Temp = Str.Replace(part, "");
             return Temp;
+        }
+        private string DecodingAdd(List<string> Words)
+        {
+            string Result = "0001", temp1, temp2, temp3;
+            int tempnum1, tempnum2, tempnum3;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            temp2 = DeletePartOfString(Words[2], "R");
+            tempnum2 = int.Parse(temp2);
+            Result += ConvertTo3BitBinary(tempnum2);
+            if (Words[3].Contains("#"))
+            {
+                Result += "1";
+                temp3 = Words[3].Replace("#", "");
+                tempnum3 = int.Parse(temp3);
+                Result += ConvertTo5BitBinary(tempnum3);
+            }
+            else
+            {
+                if (Words[3].Contains("b"))
+                {
+                    Result += "1";
+                    temp3 = Words[3].Replace("b", "");
+                    Result += temp3;
+                }
+                else
+                {
+                    if (Words[3].Contains("x"))
+                    {
+                        Result += "1";
+                        temp3 = Words[3].Replace("x", "");
+                        Result += ConvertHexTo5BitBinary(temp3);
+                       
+                    }
+                    else
+                    {
+                        Result += "000";
+                        temp3 = Words[3].Replace("R", "");
+                        tempnum3 = int.Parse(temp3);
+                        Result += ConvertTo3BitBinary(tempnum3);
+                    }
+                }
+
+            }
+            return Result;
+        }
+        
+        private string DecodingAnd(List<string> Words)
+        {
+            string Result = "0101", temp1, temp2, temp3;
+            int tempnum1, tempnum2, tempnum3;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            temp2 = DeletePartOfString(Words[2], "R");
+            tempnum2 = int.Parse(temp2);
+            Result += ConvertTo3BitBinary(tempnum2);
+            if (Words[3].Contains("#"))
+            {
+                Result += "1";
+                temp3 = Words[3].Replace("#", "");
+                tempnum3 = int.Parse(temp3);
+                Result += ConvertTo5BitBinary(tempnum3);
+            }
+            else
+            {
+                if (Words[3].Contains("b"))
+                {
+                    Result += "1";
+                    temp3 = Words[3].Replace("b", "");
+                    Result += temp3;
+                }
+                else
+                {
+                    if (Words[3].Contains("x"))
+                    {
+                        Result += "1";
+                        temp3 = Words[3].Replace("x", "");
+                        Result += ConvertHexTo5BitBinary(temp3);
+
+                    }
+                    else
+                    {
+                        Result += "000";
+                        temp3 = Words[3].Replace("R", "");
+                        tempnum3 = int.Parse(temp3);
+                        Result += ConvertTo3BitBinary(tempnum3);
+                    }
+                }
+
+            }
+            return Result;
         }
     }
 }
