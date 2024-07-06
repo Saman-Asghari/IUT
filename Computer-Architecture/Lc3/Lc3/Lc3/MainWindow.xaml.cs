@@ -89,6 +89,42 @@ namespace Lc3
                     InstructionAddresses.Add(CurrentLane, Result);
                     DecodedCode += Result;
                 }
+                if (WordsForEachLine[0] == "LDR")
+                {
+                    CurrentLane++;
+                    string Result = DecodingLdr(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "LEA")
+                {
+                    CurrentLane++;
+                    string Result = DecodingLea(WordsForEachLine,CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "ST")
+                {
+                    CurrentLane++;
+                    string Result = DecodingSt(WordsForEachLine,CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "STI")
+                {
+                    CurrentLane++;
+                    string Result = DecodingSti(WordsForEachLine, CurrentLane);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "STR")
+                {
+                    CurrentLane++;
+                    string Result = DecodingStr(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0]=="")
                 DecodedCode = DecodedCode + "\n";
             }
 
@@ -184,6 +220,25 @@ namespace Lc3
         {
             string Temp = Str.Replace(part, "");
             return Temp;
+        }
+        static string ConvertTo6BitBinary(int number)
+        {
+            if (number < -32 || number > 31)
+                throw new ArgumentOutOfRangeException(nameof(number), "Number must be between -32 and 31 inclusive.");
+            if (number < 0)
+            {
+                number = (1 << 6) + number; // This adds 64 to the negative number to wrap it within 6 bits
+            }
+            string binaryString = Convert.ToString(number, 2).PadLeft(6, '0');
+            return binaryString;
+        }
+        static string ConvertHexTo6BitBinary(string hex)
+        {
+            int number = Convert.ToInt32(hex, 16);
+            if (number < 0 || number > 63)
+                throw new ArgumentOutOfRangeException(nameof(number), "Number must be between 0 and 63 inclusive.");
+            string binaryString = Convert.ToString(number, 2).PadLeft(6, '0');
+            return binaryString;
         }
         static string ConvertTo9BitBinary(int number)
         {
@@ -322,6 +377,101 @@ namespace Lc3
             Result += ConvertTo3BitBinary(tempnum1);
             int lineresult = LabelAddresses[Words[2]].Item1 - line;  // in this first i find the value of the key in fact the line address of the label then i subtract it from pc so then i can add it to pc
             Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        private string DecodingLdr(List<string> Words)
+        {
+            string Result = "0110", temp1, temp2, temp3;
+            int tempnum1, tempnum2,tempnum3;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            temp2 = DeletePartOfString(Words[2], "R");
+            tempnum2 = int.Parse(temp2);
+            Result += ConvertTo3BitBinary(tempnum2);
+            if (Words[3].Contains("#"))
+            {
+                temp3 = Words[3].Replace("#", "");
+                tempnum3 = int.Parse(temp3);
+                Result += ConvertTo6BitBinary(tempnum3);
+            }
+            else
+            {
+                if (Words[3].Contains("b"))
+                {
+                    temp3 = Words[3].Replace("b", "");
+                    Result += temp3;
+                }
+                else
+                {
+                    temp3 = Words[3].Replace("x", "");
+                    Result += ConvertHexTo6BitBinary(temp3);
+                }
+            }
+            return Result;
+        }
+        private string DecodingLea(List<string> Words,int line)
+        {
+            string Result = "1110", temp1, temp2;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            int lineresult = LabelAddresses[Words[2]].Item1 - line;
+            Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        private string DecodingSt(List<string> Words,int line)
+        {
+            string Result = "0011", temp1, temp2;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            int lineresult = LabelAddresses[Words[2]].Item1 - line;
+            Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        private string DecodingSti(List<string> Words,int line)
+        {
+            string Result = "1011", temp1, temp2;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            int lineresult = LabelAddresses[Words[2]].Item1 - line;
+            Result += ConvertTo9BitBinary(lineresult);
+            return Result;
+        }
+        private string DecodingStr(List<string> Words)
+        {
+            string Result = "0111", temp1, temp2, temp3;
+            int tempnum1, tempnum2, tempnum3;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            temp2 = DeletePartOfString(Words[2], "R");
+            tempnum2 = int.Parse(temp2);
+            Result += ConvertTo3BitBinary(tempnum2);
+            if (Words[3].Contains("#"))
+            {
+                temp3 = Words[3].Replace("#", "");
+                tempnum3 = int.Parse(temp3);
+                Result += ConvertTo6BitBinary(tempnum3);
+            }
+            else
+            {
+                if (Words[3].Contains("b"))
+                {
+                    temp3 = Words[3].Replace("b", "");
+                    Result += temp3;
+                }
+                else
+                {
+                    temp3 = Words[3].Replace("x", "");
+                    Result += ConvertHexTo6BitBinary(temp3);
+                }
+            }
             return Result;
         }
     }
