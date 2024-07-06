@@ -27,6 +27,10 @@ namespace Lc3
         Dictionary<string,Tuple<int,int?>> LabelAddresses;   //a map for holding the lables
         Dictionary<int, string> InstructionAddresses;
         string[] Lines;   //specially global for deleting the labels from it
+        int[] R;
+        int[] CC;
+        int PC;
+        string IR;
 
         public MainWindow()
         {
@@ -38,8 +42,11 @@ namespace Lc3
             LabelAddresses = new Dictionary<string,Tuple<int, int?>>();
             InstructionAddresses = new Dictionary<int, string>();
             string Text=AssemblySource.Text;
+            R=new int[8];
+            CC=new int[3];
             Lines= Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             Decode(Lines);
+            Excute(DecodedCode);
         }
         private void Decode(string[] lines)
         {
@@ -584,6 +591,121 @@ namespace Lc3
             Result += ConvertTo3BitBinary(tempnum1);
             Result += "000000";
             return Result;
+        }
+
+
+
+
+
+        private void Excute(string Instructions)
+        {
+            var First = InstructionAddresses.First().Key;
+            PC = First;
+            while (PC != 12320)
+            {
+                string subinstruction = InstructionAddresses[PC].Substring(0,4);
+                switch(subinstruction)
+                {
+                    case "0001":
+                        ExcuteAdd(InstructionAddresses[PC]);
+                        break;
+                    case "0101":
+                        ExcuteAnd(InstructionAddresses[PC]);
+                        break;
+                    case "1001":
+                        ExcuteNot(InstructionAddresses[PC]);
+                        break;
+
+                        
+
+                }
+            }
+        }
+
+        private void ExcuteAdd(string Instruction)
+        {
+            string DR=Instruction.Substring(4,3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string SR1 = Instruction.Substring(7, 3);
+            int SR1reg = Convert.ToInt32(SR1, 2);
+            if (Instruction[10] == '0')
+            {
+                string SR2=Instruction.Substring(13, 3);
+                int SR2reg = Convert.ToInt32(SR2, 2);
+                R[DRreg]=R[SR1reg]+R[SR2reg];
+                SetCC(R[DRreg]);
+                PC++;
+                return;
+            }
+            else
+            {
+                string Imm5 = Instruction.Substring(11, 5);
+                int Number = Convert.ToInt32(Imm5, 2);
+                R[DRreg] = R[SR1reg] + Number;
+                SetCC(R[DRreg]);
+                PC++;
+                return;
+            }
+        }
+
+        private void ExcuteAnd(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string SR1 = Instruction.Substring(7, 3);
+            int SR1reg = Convert.ToInt32(SR1, 2);
+            if (Instruction[10] == '0')
+            {
+                string SR2 = Instruction.Substring(13, 3);
+                int SR2reg = Convert.ToInt32(SR2, 2);
+                R[DRreg] = R[SR1reg] & R[SR2reg];
+                SetCC(R[DRreg]);
+                PC++;
+                return;
+            }
+            else
+            {
+                string Imm5 = Instruction.Substring(11, 5);
+                int Number = Convert.ToInt32(Imm5, 2);
+                R[DRreg] = R[SR1reg] & Number;
+                SetCC(R[DRreg]);
+                PC++;
+                return;
+            }
+        }
+        
+        private void ExcuteNot(string Instruction)
+        {
+            string DR = Instruction.Substring(4, 3);
+            int DRreg = Convert.ToInt32(DR, 2);
+            string SR1 = Instruction.Substring(7, 3);
+            int SR1reg = Convert.ToInt32(SR1, 2);
+            R[DRreg] = ~R[SR1reg];
+            SetCC(R[DRreg]);
+            PC++;
+            return ;
+        }
+
+        private void SetCC(int Result)
+        {
+            if(Result == 0)
+            {
+                CC[0] = 0;
+                CC[1] = 1;
+                CC[2] = 0;
+            }
+            if(Result >0) 
+            {
+                CC[0] = 0;
+                CC[1] = 0;
+                CC[2] = 1;
+            }
+            if(Result < 0)
+            {
+                CC[0] = 1;
+                CC[1] = 0;
+                CC[2] = 0;
+            }
         }
     }
 }
