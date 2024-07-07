@@ -21,46 +21,46 @@
             <ImageBrush ImageSource="/background.jpg"/>
         </Grid.Background>
         <TextBox x:Name="AssemblySource" FontSize="13" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="245" Height="392" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="#FFEBEDAB"/>
-        <Button x:Name="SaveAC" Content="Enter" HorizontalAlignment="Left" Height="17" Margin="54,407,0,0" VerticalAlignment="Top" Width="78" Click="SaveAC_Click"/>
+        <Button x:Name="SaveAC" Content="Enter" HorizontalAlignment="Left" Height="22" Margin="54,407,0,0" VerticalAlignment="Top" Width="78" Click="SaveAC_Click"/>
         <Grid HorizontalAlignment="Left" Height="392" Margin="448,10,0,0" VerticalAlignment="Top" Width="329" Background="#FFEBEDAB">
-            <TextBox x:Name="R0TextBox" HorizontalAlignment="Left" Height="25" Margin="54,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R0TextBox_TextChanged" Foreground="Red">
+            <TextBox x:Name="R0TextBox" HorizontalAlignment="Left" Height="25" Margin="54,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R0TextBox_TextChanged" Foreground="Red">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
             <Label x:Name="R0Label" Content="R0" HorizontalAlignment="Left" Height="25" Margin="10,10,0,0" VerticalAlignment="Top" Width="39"/>
-            <TextBox x:Name="R1TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R1TextBox_TextChanged">
+            <TextBox x:Name="R1TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R1TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
             <TextBox HorizontalAlignment="Left" Height="25" Visibility="Hidden" Margin="-153,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="90" TextChanged="TextBox_TextChanged"/>
-            <TextBox x:Name="R3TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R3TextBox_TextChanged">
+            <TextBox x:Name="R3TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R3TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
-            <TextBox x:Name="R4TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R4TextBox_TextChanged">
+            <TextBox x:Name="R4TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R4TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
-            <TextBox x:Name="R5TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R5TextBox_TextChanged">
+            <TextBox x:Name="R5TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R5TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
-            <TextBox x:Name="R6TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R6TextBox_TextChanged">
+            <TextBox x:Name="R6TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R6TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
-            <TextBox x:Name="R7TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R7TextBox_TextChanged">
+            <TextBox x:Name="R7TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R7TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
-            <TextBox x:Name="PCTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,250,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="PCTextBox_TextChanged">
+            <TextBox x:Name="PCTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,250,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="PCTextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
@@ -73,7 +73,7 @@
             <Label x:Name="R6Label" Content="R6&#xD;&#xA;R6" HorizontalAlignment="Left" Height="25" Margin="10,190,0,0" VerticalAlignment="Top" Width="39"/>
             <Label x:Name="R7Label" Content="R7" HorizontalAlignment="Left" Height="25" Margin="10,220,0,0" VerticalAlignment="Top" Width="39"/>
             <Label x:Name="PCLabel" Content="PC" HorizontalAlignment="Left" Height="25" Margin="10,250,0,0" VerticalAlignment="Top" Width="39"/>
-            <TextBox x:Name="IRTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="IRTextBox_TextChanged">
+            <TextBox x:Name="IRTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="IRTextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
@@ -82,22 +82,33 @@
             <Button x:Name="SetDelay" Content="Set" HorizontalAlignment="Left" Height="31" Margin="232,351,0,0" VerticalAlignment="Top" Width="87" Click="SetDelay_Click" Background="#FF88E9E0"/>
             <TextBox x:Name="DelayNumber" HorizontalAlignment="Left" Height="31" Margin="129,351,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
             <Label Content="enter the delay :" HorizontalAlignment="Left" Height="31" Margin="10,351,0,0" VerticalAlignment="Top" Width="114"/>
-            <TextBox x:Name="R2TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R2TextBox_TextChanged">
+            <TextBox x:Name="R2TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" TextChanged="R2TextBox_TextChanged">
                 <TextBox.Background>
                     <ImageBrush ImageSource="/Lables.jpg"/>
                 </TextBox.Background>
             </TextBox>
+            <TextBox HorizontalAlignment="Left" Visibility="Hidden" Margin="202,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+            <Label x:Name="NLabel" Content="N" HorizontalAlignment="Left" Height="25" Margin="217,10,0,0" VerticalAlignment="Top" Width="25"/>
+            <Label x:Name="ZLabel" Content="Z" HorizontalAlignment="Left" Height="25" Margin="217,40,0,0" VerticalAlignment="Top" Width="25"/>
+            <Label x:Name="PLabel" Content="P" HorizontalAlignment="Left" Height="25" Margin="217,70,0,0" VerticalAlignment="Top" Width="25"/>
+            <TextBox x:Name="NTextBox" HorizontalAlignment="Left" Height="25" Margin="247,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" TextChanged="NTextBox_TextChanged"/>
+            <TextBox x:Name="ZTextBox" HorizontalAlignment="Left" Height="25" Margin="247,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" TextChanged="ZTextBox_TextChanged"/>
+            <TextBox x:Name="PTextBox" HorizontalAlignment="Left" Height="25" Margin="247,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30" TextChanged="PTextBox_TextChanged"/>
+            <Grid HorizontalAlignment="Left" Height="193" Margin="217,112,0,0" VerticalAlignment="Top" Width="102">
+                <ScrollViewer Grid.Row="1" Margin="10">
+                    <StackPanel Name="MyStack" Background="LightGray" Height="194" Width="102"/>
+                </ScrollViewer>
+            </Grid>
         </Grid>
-        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="25" Margin="292,399,0,0" VerticalAlignment="Top" Width="130" Click="ExitButton_Click"/>
-        <Grid>
-            <TextBox Name="ShiningTextBox" Width="166" Height="264" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="Welcome To Lc3&#xD;&#xA; Simulator&#xD;&#xA;:)))&#xD;&#xA;"
-                 Background="Yellow" Margin="267,0,0,0" FontSize="20" FontWeight="Bold">
-                <TextBox.Triggers>
-                    <EventTrigger RoutedEvent="TextBox.Loaded">
-                        <BeginStoryboard Storyboard="{StaticResource ShiningAnimation}"/>
-                    </EventTrigger>
-                </TextBox.Triggers>
-            </TextBox>
-        </Grid>
+        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="25" Margin="286,398,0,0" VerticalAlignment="Top" Width="130" Click="ExitButton_Click"/>
+
+        <TextBox x:Name="ShiningTextBox" Width="166" Height="264" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="Welcome To Lc3&#xA; Simulator&#xA;:)))&#xA;"
+                 Background="Yellow" Margin="268,74,0,0" FontSize="20" FontWeight="Bold">
+            <TextBox.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard Storyboard="{StaticResource ShiningAnimation}"/>
+                </EventTrigger>
+            </TextBox.Triggers>
+        </TextBox>
     </Grid>
 </Window>

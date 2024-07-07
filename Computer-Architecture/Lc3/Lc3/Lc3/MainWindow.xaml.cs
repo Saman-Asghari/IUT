@@ -22,7 +22,7 @@ namespace Lc3
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<string> Instructions = new List<string> {"ADD","AND","BRn", "BRz", "BRp", "BRnz", "BRnp", "BRzp", "BR", "JMP","JSR","JSRR","LD","LDI","LDR","LEA","NOT","RET","RTI","ST","STI","STR","TRAP","ORG","HLT","END",};
+        List<string> Instructions = new List<string> {"ADD","AND","BRn", "BRz", "BRp", "BRnz", "BRnp", "BRzp", "BR","BRnzp", "JMP","JSR","JSRR","LD","LDI","LDR","LEA","NOT","RET","RTI","ST","STI","STR","TRAP","ORG","HLT","PUSH","POP","END",};
         List<string> DataLabels = new List<string> { "DEC", "BIN", "HEX" }; 
         string DecodedCode = "";  //hold the last result here
         int CurrentLane = 0;    //used for handling org instruction
@@ -35,6 +35,10 @@ namespace Lc3
         int EndOfProgram = 0;
         string IR;
         int Delay;
+        Stack<int> RegStack;
+        string PreviousTextN = string.Empty;
+        string PreviousTextZ = string.Empty;
+        string PreviousTextP = string.Empty;
         string PreviousTextR0 = string.Empty;
         string PreviousTextR1 =string.Empty;
         string PreviousTextR2 = string.Empty;
@@ -55,6 +59,7 @@ namespace Lc3
         {
             LabelAddresses = new Dictionary<string,Tuple<int, int?>>();
             InstructionAddresses = new Dictionary<int, string>();
+            RegStack= new Stack<int>();
             string Text=AssemblySource.Text;
             R=new int[8];
             CC=new int[3];
@@ -79,7 +84,7 @@ namespace Lc3
                 }
                 if (WordsForEachLine[0] == "HLT")
                 {
-                    EndOfProgram=CurrentLane;
+                    EndOfProgram=CurrentLane+1;
                 }
                 if (WordsForEachLine[0] == "ADD")
                 {
@@ -186,6 +191,20 @@ namespace Lc3
                     InstructionAddresses.Add(CurrentLane, Result);
                     DecodedCode += Result;
                 }
+                if (WordsForEachLine[0] == "PUSH")
+                {
+                    CurrentLane++;
+                    string Result=DecodingPush(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane, Result);
+                    DecodedCode += Result;
+                }
+                if (WordsForEachLine[0] == "POP")
+                {
+                    CurrentLane++;
+                    string Result=DecodingPop(WordsForEachLine);
+                    InstructionAddresses.Add(CurrentLane,Result);
+                    DecodedCode += Result;
+                }
                 
                 
                 DecodedCode = DecodedCode + "\n";
@@ -209,6 +228,11 @@ namespace Lc3
                 if (!(Instructions.Contains(WordsForEachLine[0])))  //found label
                 {
                     CurrentLane++;
+                    if (WordsForEachLine[0] == ";")
+                    {
+                        CurrentLane--;
+                        continue;
+                    }
                     if (DataLabels.Contains(WordsForEachLine[1]))  //finding if it is data or function based
                     {
                         if (WordsForEachLine[1] == "HEX")
@@ -345,6 +369,31 @@ namespace Lc3
             }
 
             return new string(bits);
+        }
+        static string ConvertTo16BitBinary(int number)
+        {
+            if (number < -32768 || number > 32767)
+            {
+                throw new ArgumentOutOfRangeException(nameof(number), "The number must be between -32768 and 32767.");
+            }
+
+            if (number >= 0)
+            {
+                return Convert.ToString(number, 2).PadLeft(16, '0');
+            }
+            else
+            {
+                string binaryString = Convert.ToString(number, 2);
+                if (binaryString.Length < 16)
+                {
+                    binaryString = binaryString.PadLeft(16, '1');
+                }
+                else if (binaryString.Length > 16)
+                {
+                    binaryString = binaryString.Substring(binaryString.Length - 16);
+                }
+                return binaryString;
+            }
         }
         static string ConvertHexTo6BitBinary(string hex)
         {
@@ -642,6 +691,27 @@ namespace Lc3
             return Result;
         }
 
+        private string DecodingPush(List<string> Words)
+        {
+            string Result = "1101", temp1;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1 = int.Parse(temp1);
+            Result += ConvertTo3BitBinary(tempnum1);
+            Result += "000000000";
+            return Result;
+        }
+        private string DecodingPop(List<string> Words)
+        {
+            string Result = "1101", temp1;
+            int tempnum1;
+            temp1 = DeletePartOfString(Words[1], "R");
+            tempnum1=int.Parse(temp1);
+            Result+= ConvertTo3BitBinary(tempnum1);
+            Result += "100000000";
+            return Result;
+        }
+
         private string DecodingJsrr(List<string> Words)
         {
             string Result = "0100000", temp1;
@@ -707,11 +777,42 @@ namespace Lc3
                     case "0100":
                         ExcuteJsrOrJsrr(InstructionAddresses[PC]);
                         break;
+                    case "1101":
+                        ExcutePushOrPop(InstructionAddresses[PC]);
+                        break;
 
                 }
             }
         }
 
+        private void ExcutePushOrPop(string Instruction)
+        {
+            if (Instruction[7] == '0')
+            {
+                string SR=Instruction.Substring(4, 3);
+                int SRreg=Convert.ToInt32(SR,2);
+                RegStack.Push(R[SRreg]);
+                SetCC(R[SRreg]);
+                IR = Instruction;
+                SetPushStackUI(R[SRreg]);
+                SetUI();
+                PC++;
+                return;
+            }
+            else
+            {
+                string SR = Instruction.Substring(4, 3);
+                int SRreg = Convert.ToInt32(SR,2);
+                int temp=RegStack.Pop();
+                R[SRreg] =temp;
+                SetCC(temp);
+                IR = Instruction;
+                SetPopStackUI();
+                SetUI(); 
+                PC++;
+                return;
+            }
+        }
         private void ExcuteAdd(string Instruction)
         {
             string DR=Instruction.Substring(4,3);
@@ -1117,16 +1218,20 @@ namespace Lc3
 
         private void SetUI()
         {
-            R0TextBox.Text = R[0].ToString();
-            R1TextBox.Text = R[1].ToString();
-            R2TextBox.Text = R[2].ToString();
-            R3TextBox.Text = R[3].ToString();
-            R4TextBox.Text = R[4].ToString();
-            R5TextBox.Text = R[5].ToString();
-            R6TextBox.Text = R[6].ToString();
-            R7TextBox.Text = R[7].ToString();
-            PCTextBox.Text = PC.ToString();
+            R0TextBox.Text = R[0].ToString() + " (" + ConvertTo16BitBinary(R[0])+")";
+            R1TextBox.Text = R[1].ToString()+" (" + ConvertTo16BitBinary(R[1]) + ")";
+            R2TextBox.Text = R[2].ToString() + " (" + ConvertTo16BitBinary(R[2]) + ")";
+            R3TextBox.Text = R[3].ToString() + " (" + ConvertTo16BitBinary(R[3]) + ")";
+            R4TextBox.Text = R[4].ToString() + " (" + ConvertTo16BitBinary(R[4]) + ")";
+            R5TextBox.Text = R[5].ToString() + " (" + ConvertTo16BitBinary(R[5]) + ")";
+            R6TextBox.Text = R[6].ToString() + " (" + ConvertTo16BitBinary(R[6]) + ")";
+            R7TextBox.Text = R[7].ToString() + " (" + ConvertTo16BitBinary(R[7]) + ")";
+            PCTextBox.Text = PC.ToString() + " (" + ConvertTo16BitBinary(PC) + ")";
             IRTextBox.Text = IR;
+            NTextBox.Text = CC[0].ToString();
+            ZTextBox.Text = CC[1].ToString();
+            PTextBox.Text = CC[2].ToString();
+
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -1258,6 +1363,67 @@ namespace Lc3
             }
 
             PreviousTextIR = IRTextBox.Text;
+        }
+
+        private async void NTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (NTextBox.Text != PreviousTextN)
+            {
+                NLabel.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                NLabel.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextN = NTextBox.Text;
+        }
+
+        private async void ZTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ZTextBox.Text != PreviousTextZ)
+            {
+                ZLabel.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                ZLabel.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextZ = ZTextBox.Text;
+        }
+
+        private async void PTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (PTextBox.Text != PreviousTextP)
+            {
+                PLabel.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                PLabel.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextP = PTextBox.Text;
+        }
+
+        private void SetPushStackUI(int Number)
+        {
+            TextBlock textBlock = new TextBlock
+            {
+                Text = Number.ToString(),
+                Margin = new Thickness(5),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Background = System.Windows.Media.Brushes.LightBlue,
+                Padding = new Thickness(5)
+            };
+
+            MyStack.Children.Insert(0, textBlock);
+        }
+        private void SetPopStackUI() 
+        {
+            if (MyStack.Children.Count > 0)
+            {
+                MyStack.Children.RemoveAt(0);
+            }
+            else
+            {
+                MessageBox.Show("The stack is empty. Nothing to pop.", "Empty Stack", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }
