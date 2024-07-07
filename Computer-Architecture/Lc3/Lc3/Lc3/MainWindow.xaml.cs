@@ -287,6 +287,45 @@ namespace Lc3
             string binaryString = Convert.ToString(number, 2).PadLeft(6, '0');
             return binaryString;
         }
+        static int Convert9BitSignedBinaryToDecimal(string binaryString)
+        {
+            if (binaryString.Length != 9)
+            {
+                throw new ArgumentException("Input must be a 9-bit binary string.");
+            }
+            bool isNegative = binaryString[0] == '1';
+            if (isNegative)
+            {
+                string magnitudeBinaryString = GetTwosComplement(binaryString);
+                int magnitude = Convert.ToInt32(magnitudeBinaryString, 2);
+                return -magnitude;
+            }
+            else
+            {
+                return Convert.ToInt32(binaryString, 2);
+            }
+        }
+
+        static string GetTwosComplement(string binaryString)
+        {
+            char[] bits = binaryString.ToCharArray();
+            bool foundOne = false;
+
+            // Perform the two's complement
+            for (int i = bits.Length - 1; i >= 0; i--)
+            {
+                if (foundOne)
+                {
+                    bits[i] = bits[i] == '1' ? '0' : '1';
+                }
+                else if (bits[i] == '1')
+                {
+                    foundOne = true;
+                }
+            }
+
+            return new string(bits);
+        }
         static string ConvertHexTo6BitBinary(string hex)
         {
             int number = Convert.ToInt32(hex, 16);
@@ -637,6 +676,16 @@ namespace Lc3
                     case "0111":
                         ExcuteStr(InstructionAddresses[PC]);
                         break;
+                    case "0000":
+                        ExcuteBr(InstructionAddresses[PC]);
+                        break;
+                    case "1100":
+                        ExcuteJmpOrRet(InstructionAddresses[PC]);
+                        break;
+                    case "0100":
+                        ExcuteJsrOrJsrr(InstructionAddresses[PC]);
+                        break;
+
                         
 
                 }
@@ -712,7 +761,7 @@ namespace Lc3
             string DR = Instruction.Substring(4, 3);
             int DRreg = Convert.ToInt32(DR, 2);
             string PCoffset= Instruction.Substring(7, 9);
-            int labelAddress=PC+Convert.ToInt32(PCoffset, 2);
+            int labelAddress=PC+Convert9BitSignedBinaryToDecimal(PCoffset);
             int? TempNumber=null;
             foreach(var kvp in LabelAddresses)
             {
@@ -731,7 +780,7 @@ namespace Lc3
             string DR = Instruction.Substring(4, 3);
             int DRreg = Convert.ToInt32(DR, 2);
             string PCoffset = Instruction.Substring(7, 9);
-            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int labelAddress = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
             int? TempNumber = null;
             int? TempNumber2 = null;
             foreach (var kvp in LabelAddresses)
@@ -761,7 +810,7 @@ namespace Lc3
             string BaseReg = Instruction.Substring(7, 3);
             int Basereg = Convert.ToInt32(BaseReg, 2);
             string offset= Instruction.Substring(10, 6);
-            int offsetNumber = Convert.ToInt32(offset, 2);
+            int offsetNumber = Convert9BitSignedBinaryToDecimal(offset);
             int? TempNumber = null;
             foreach(var kvp in LabelAddresses) 
             {
@@ -781,7 +830,7 @@ namespace Lc3
             string DR = Instruction.Substring(4, 3);
             int DRreg = Convert.ToInt32(DR, 2);
             string PCoffset = Instruction.Substring(7, 9);
-            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int labelAddress = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
             R[DRreg]= (int)labelAddress;
             PC++;
             return;
@@ -791,13 +840,12 @@ namespace Lc3
             string SR = Instruction.Substring(4, 3);
             int SRreg = Convert.ToInt32(SR, 2);
             string PCoffset = Instruction.Substring(7, 9);
-            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
-            int SearchValue=PC+labelAddress;
+            int labelAddress = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
             int? help = R[SRreg];
             foreach (var key in new List<string>(LabelAddresses.Keys))
             {
                 var tupleValue = LabelAddresses[key];
-                if (tupleValue.Item1 == SearchValue)
+                if (tupleValue.Item1 == labelAddress)
                 {
                     LabelAddresses[key] = Tuple.Create(tupleValue.Item1,help);
                 }
@@ -811,7 +859,7 @@ namespace Lc3
             string SR = Instruction.Substring(4, 3);
             int SRreg = Convert.ToInt32(SR, 2);
             string PCoffset = Instruction.Substring(7, 9);
-            int labelAddress = PC + Convert.ToInt32(PCoffset, 2);
+            int labelAddress = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
             int? TempNumber = null;
             int? help = R[SRreg];
             foreach (var kvp in LabelAddresses)
@@ -841,7 +889,7 @@ namespace Lc3
             string BaseReg = Instruction.Substring(7, 3);
             int Basereg = Convert.ToInt32(BaseReg, 2);
             string offset = Instruction.Substring(10, 6);
-            int offsetNumber = Convert.ToInt32(BaseReg, 2);
+            int offsetNumber = Convert9BitSignedBinaryToDecimal(offset);
             int? help = R[SRreg];
             int TempNumber =offsetNumber+R[Basereg];
             int SearchValue = TempNumber;
@@ -853,6 +901,115 @@ namespace Lc3
                     LabelAddresses[key] = Tuple.Create(tupleValue.Item1, help);
                 }
             }
+        }
+        private void ExcuteBr(string Instruction)
+        {
+            int N = 1, Z = 1, P = 1;
+            string PCoffset = Instruction.Substring(7, 9);
+            switch (Instruction.Substring(4, 3))
+            {
+                case "000":
+                    PC = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    break;
+                case "001":
+                    if (CC[2] == 1)
+                    {
+                        PC = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "010":
+                    if (CC[1] == 1) 
+                    {
+                        PC = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "100":
+                    if (CC[0] == 1)
+                    {
+                        PC = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "011":
+                    if (CC[1] == 1 || CC[2] == 1)
+                    {
+                        PC= PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "101":
+                    if (CC[0] == 1 || CC[2] == 1)
+                    {
+                        PC=PC+Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "110":
+                    if (CC[0]==1|| CC[1] == 1)
+                    {
+                        PC=PC+ Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+                case "111":
+                    if (CC[0] == 1 || CC[1] == 1 || CC[2]==1) 
+                    {
+                        PC = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
+                    }
+                    else
+                    {
+                        PC++;
+                    }
+                    break;
+            }
+        }
+
+        private void ExcuteJmpOrRet(string Instruction)
+        {
+            string BaseReg = Instruction.Substring(7, 3);
+            int Basereg = Convert.ToInt32(BaseReg, 2);
+            PC = R[Basereg];
+        }
+
+        
+        private void ExcuteJsrOrJsrr(string Instruction)
+        {
+            int temp=PC;
+            if (Instruction[4] == '0')
+            {
+                string BaseReg = Instruction.Substring(7, 3);
+                int Basereg = Convert.ToInt32(BaseReg, 2);
+                PC = R[Basereg];
+                R[7] = temp+1;
+            }
+            else
+            {
+                string offset=Instruction.Substring(5, 11);
+                int offsetNum= Convert9BitSignedBinaryToDecimal(offset);
+                PC=PC + offsetNum;
+                R[7]=temp+1;
+            }
+            return;
         }
         private void SetCC(int Result)
         {
