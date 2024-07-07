@@ -13,6 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.VisualBasic.FileIO;
 using System.Configuration;
 using System.Buffers;
+using System.IO;
 
 namespace Lc3
 {
@@ -31,7 +32,19 @@ namespace Lc3
         int[] R;
         int[] CC;
         int PC;
+        int EndOfProgram = 0;
         string IR;
+        int Delay;
+        string PreviousTextR0 = string.Empty;
+        string PreviousTextR1 =string.Empty;
+        string PreviousTextR2 = string.Empty;
+        string PreviousTextR3 = string.Empty;
+        string PreviousTextR4 = string.Empty;
+        string PreviousTextR5 = string.Empty;
+        string PreviousTextR6 = string.Empty;
+        string PreviousTextR7 = string.Empty;
+        string PreviousTextPC = string.Empty;
+        string PreviousTextIR = string.Empty;
 
         public MainWindow()
         {
@@ -47,7 +60,9 @@ namespace Lc3
             CC=new int[3];
             Lines= Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             Decode(Lines);
+            SaveStringToBinFile(DecodedCode, "Assembly.bin");
             Excute(DecodedCode);
+            Console.WriteLine( "hellloo");
         }
         private void Decode(string[] lines)
         {
@@ -61,6 +76,10 @@ namespace Lc3
                     CurrentLane = TempNumber;
                     CurrentLane--;
                     continue;
+                }
+                if (WordsForEachLine[0] == "HLT")
+                {
+                    EndOfProgram=CurrentLane;
                 }
                 if (WordsForEachLine[0] == "ADD")
                 {
@@ -179,6 +198,7 @@ namespace Lc3
             for(int i=0;i<lines.Count();i++)
             {
                 List<string> WordsForEachLine = SplitString(lines[i]);  //specify the words in each line
+                
                 if (WordsForEachLine[0]=="ORG") 
                 {
                     int TempNumber = Convert.ToInt32(DeletePartOfString(WordsForEachLine[1],"x"), 16);
@@ -637,12 +657,14 @@ namespace Lc3
 
 
 
-        private void Excute(string Instructions)
+        private async void Excute(string Instructions)
         {
             var First = InstructionAddresses.First().Key;
             PC = First;
-            while (PC != 12320)
+            while (PC !=EndOfProgram)
             {
+                //Thread.Sleep(5000);
+                await Task.Delay(Delay);
                 string subinstruction = InstructionAddresses[PC].Substring(0,4);
                 switch(subinstruction)
                 {
@@ -686,8 +708,6 @@ namespace Lc3
                         ExcuteJsrOrJsrr(InstructionAddresses[PC]);
                         break;
 
-                        
-
                 }
             }
         }
@@ -704,6 +724,8 @@ namespace Lc3
                 int SR2reg = Convert.ToInt32(SR2, 2);
                 R[DRreg]=R[SR1reg]+R[SR2reg];
                 SetCC(R[DRreg]);
+                IR = Instruction;
+                SetUI();
                 PC++;
                 return;
             }
@@ -713,6 +735,8 @@ namespace Lc3
                 int Number = Convert.ToInt32(Imm5, 2);
                 R[DRreg] = R[SR1reg] + Number;
                 SetCC(R[DRreg]);
+                IR = Instruction;
+                SetUI();
                 PC++;
                 return;
             }
@@ -730,6 +754,9 @@ namespace Lc3
                 int SR2reg = Convert.ToInt32(SR2, 2);
                 R[DRreg] = R[SR1reg] & R[SR2reg];
                 SetCC(R[DRreg]);
+                IR = Instruction;
+
+                SetUI();
                 PC++;
                 return;
             }
@@ -739,6 +766,9 @@ namespace Lc3
                 int Number = Convert.ToInt32(Imm5, 2);
                 R[DRreg] = R[SR1reg] & Number;
                 SetCC(R[DRreg]);
+                IR = Instruction;
+
+                SetUI();
                 PC++;
                 return;
             }
@@ -752,6 +782,9 @@ namespace Lc3
             int SR1reg = Convert.ToInt32(SR1, 2);
             R[DRreg] = ~R[SR1reg];
             SetCC(R[DRreg]);
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return ;
         }
@@ -772,6 +805,9 @@ namespace Lc3
             }
             R[DRreg] = (int)TempNumber;
             SetCC(R[DRreg]);
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return;
         }
@@ -800,6 +836,9 @@ namespace Lc3
             }
             R[DRreg] = (int)TempNumber2;
             SetCC(R[DRreg]);
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return;
         }
@@ -821,6 +860,9 @@ namespace Lc3
             }
             R[DRreg]= (int)TempNumber;
             SetCC(R[DRreg]);
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return;
         }
@@ -832,6 +874,9 @@ namespace Lc3
             string PCoffset = Instruction.Substring(7, 9);
             int labelAddress = PC + Convert9BitSignedBinaryToDecimal(PCoffset);
             R[DRreg]= (int)labelAddress;
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return;
         }
@@ -850,6 +895,9 @@ namespace Lc3
                     LabelAddresses[key] = Tuple.Create(tupleValue.Item1,help);
                 }
             }
+            IR = Instruction;
+
+            SetUI();
             PC++;
             return;
         }
@@ -878,6 +926,9 @@ namespace Lc3
                     LabelAddresses[key] = Tuple.Create(tupleValue.Item1, help);
                 }
             }
+            IR = Instruction;
+
+            SetUI() ;
             PC ++;
             return;
         }
@@ -901,6 +952,11 @@ namespace Lc3
                     LabelAddresses[key] = Tuple.Create(tupleValue.Item1, help);
                 }
             }
+            IR = Instruction;
+
+            SetUI();
+            PC ++;
+            return;
         }
         private void ExcuteBr(string Instruction)
         {
@@ -982,6 +1038,9 @@ namespace Lc3
                     }
                     break;
             }
+            IR = Instruction;
+
+            SetUI();
         }
 
         private void ExcuteJmpOrRet(string Instruction)
@@ -989,6 +1048,9 @@ namespace Lc3
             string BaseReg = Instruction.Substring(7, 3);
             int Basereg = Convert.ToInt32(BaseReg, 2);
             PC = R[Basereg];
+            IR = Instruction;
+
+            SetUI();
         }
 
         
@@ -1009,6 +1071,9 @@ namespace Lc3
                 PC=PC + offsetNum;
                 R[7]=temp+1;
             }
+            IR = Instruction;
+
+            SetUI();
             return;
         }
         private void SetCC(int Result)
@@ -1031,6 +1096,168 @@ namespace Lc3
                 CC[1] = 0;
                 CC[2] = 0;
             }
+        }
+        static void SaveStringToBinFile(string data, string filePath)
+        {
+            byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(data);
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                using (BinaryWriter writer = new BinaryWriter(fs))
+                {
+                    writer.Write(byteArray);
+                }
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void SetUI()
+        {
+            R0TextBox.Text = R[0].ToString();
+            R1TextBox.Text = R[1].ToString();
+            R2TextBox.Text = R[2].ToString();
+            R3TextBox.Text = R[3].ToString();
+            R4TextBox.Text = R[4].ToString();
+            R5TextBox.Text = R[5].ToString();
+            R6TextBox.Text = R[6].ToString();
+            R7TextBox.Text = R[7].ToString();
+            PCTextBox.Text = PC.ToString();
+            IRTextBox.Text = IR;
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void SetDelay_Click(object sender, RoutedEventArgs e)
+        {
+            Delay=Convert.ToInt32(DelayNumber.Text);
+            Delay = Delay * 1000;
+        }
+
+        private async void R1TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R1TextBox.Text != PreviousTextR1)
+            {
+                R1Label.Background=new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay/2);
+                R1Label.Background=new SolidColorBrush(Colors.White);
+            }
+            
+            PreviousTextR1 = R1TextBox.Text;
+        }
+
+        private async void R0TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R0TextBox.Text != PreviousTextR0)
+            {
+                R0Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R0Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR0 = R0TextBox.Text;
+        }
+
+        private async void R2TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R2TextBox.Text != PreviousTextR2)
+            {
+                R2Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R2Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR2 = R2TextBox.Text;
+        }
+
+        private async  void R3TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R3TextBox.Text != PreviousTextR3)
+            {
+                R3Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R3Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR3 = R3TextBox.Text;
+        }
+
+        private async void R4TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R4TextBox.Text != PreviousTextR4)
+            {
+                R4Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R4Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR4 = R4TextBox.Text;
+        }
+
+        private async void R5TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R5TextBox.Text != PreviousTextR5)
+            {
+                R5Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R5Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR5 = R5TextBox.Text;
+        }
+
+        private async void R6TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R6TextBox.Text != PreviousTextR6)
+            {
+                R6Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R6Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR6 = R6TextBox.Text;
+        }
+
+        private async void R7TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (R7TextBox.Text != PreviousTextR7)
+            {
+                R7Label.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                R7Label.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextR7 = R7TextBox.Text;
+        }
+
+        private async void PCTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (PCTextBox.Text != PreviousTextPC)
+            {
+                PCLabel.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                PCLabel.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextPC = PCTextBox.Text;
+        }
+
+        private async void IRTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (IRTextBox.Text != PreviousTextIR)
+            {
+                IRLabel.Background = new SolidColorBrush(Colors.Red);
+                await Task.Delay(Delay / 2);
+                IRLabel.Background = new SolidColorBrush(Colors.White);
+            }
+
+            PreviousTextIR = IRTextBox.Text;
         }
     }
 }

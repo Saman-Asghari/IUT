@@ -6,9 +6,98 @@
         xmlns:local="clr-namespace:Lc3"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <!-- Define the Shining Animation -->
+        <Storyboard x:Key="ShiningAnimation" RepeatBehavior="Forever">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBox.Background).(SolidColorBrush.Color)">
+                <LinearColorKeyFrame Value="Yellow" KeyTime="0:0:0.0"/>
+                <LinearColorKeyFrame Value="Orange" KeyTime="0:0:1.0"/>
+                <LinearColorKeyFrame Value="Yellow" KeyTime="0:0:2.0"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
     <Grid>
-        <TextBox x:Name="AssemblySource" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="245" Height="392" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+        <Grid.Background>
+            <ImageBrush ImageSource="/background.jpg"/>
+        </Grid.Background>
+        <TextBox x:Name="AssemblySource" FontSize="13" FontWeight="Bold" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="245" Height="392" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Background="#FFEBEDAB"/>
         <Button x:Name="SaveAC" Content="Enter" HorizontalAlignment="Left" Height="17" Margin="54,407,0,0" VerticalAlignment="Top" Width="78" Click="SaveAC_Click"/>
-
+        <Grid HorizontalAlignment="Left" Height="392" Margin="448,10,0,0" VerticalAlignment="Top" Width="329" Background="#FFEBEDAB">
+            <TextBox x:Name="R0TextBox" HorizontalAlignment="Left" Height="25" Margin="54,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R0TextBox_TextChanged" Foreground="Red">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <Label x:Name="R0Label" Content="R0" HorizontalAlignment="Left" Height="25" Margin="10,10,0,0" VerticalAlignment="Top" Width="39"/>
+            <TextBox x:Name="R1TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R1TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox HorizontalAlignment="Left" Height="25" Visibility="Hidden" Margin="-153,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="90" TextChanged="TextBox_TextChanged"/>
+            <TextBox x:Name="R3TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R3TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox x:Name="R4TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R4TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox x:Name="R5TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R5TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox x:Name="R6TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R6TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox x:Name="R7TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R7TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <TextBox x:Name="PCTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,250,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="PCTextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <Label x:Name="R1Label" Content="R1" HorizontalAlignment="Left" Height="25" Margin="10,40,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R2Label" Content="R2&#xD;&#xA;R2" HorizontalAlignment="Left" Height="25" Margin="10,70,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R3Label" Content="R3" HorizontalAlignment="Left" Height="25" Margin="10,100,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R4Label" Content="R4" HorizontalAlignment="Left" Height="25" Margin="10,130,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R5Label" Content="R5" HorizontalAlignment="Left" Height="25" Margin="10,160,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R6Label" Content="R6&#xD;&#xA;R6" HorizontalAlignment="Left" Height="25" Margin="10,190,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="R7Label" Content="R7" HorizontalAlignment="Left" Height="25" Margin="10,220,0,0" VerticalAlignment="Top" Width="39"/>
+            <Label x:Name="PCLabel" Content="PC" HorizontalAlignment="Left" Height="25" Margin="10,250,0,0" VerticalAlignment="Top" Width="39"/>
+            <TextBox x:Name="IRTextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="IRTextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+            <Label x:Name="IRLabel" Content="IR" HorizontalAlignment="Left" Height="25" Margin="10,280,0,0" VerticalAlignment="Top" Width="39"/>
+            <Button x:Name="SetDelay" Content="Set" HorizontalAlignment="Left" Height="31" Margin="232,351,0,0" VerticalAlignment="Top" Width="87" Click="SetDelay_Click" Background="#FF88E9E0"/>
+            <TextBox x:Name="DelayNumber" HorizontalAlignment="Left" Height="31" Margin="129,351,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"/>
+            <Label Content="enter the delay :" HorizontalAlignment="Left" Height="31" Margin="10,351,0,0" VerticalAlignment="Top" Width="114"/>
+            <TextBox x:Name="R2TextBox" Foreground="Red" HorizontalAlignment="Left" Height="25" Margin="54,70,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" TextChanged="R2TextBox_TextChanged">
+                <TextBox.Background>
+                    <ImageBrush ImageSource="/Lables.jpg"/>
+                </TextBox.Background>
+            </TextBox>
+        </Grid>
+        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="25" Margin="292,399,0,0" VerticalAlignment="Top" Width="130" Click="ExitButton_Click"/>
+        <Grid>
+            <TextBox Name="ShiningTextBox" Width="166" Height="264" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Text="Welcome To Lc3&#xD;&#xA; Simulator&#xD;&#xA;:)))&#xD;&#xA;"
+                 Background="Yellow" Margin="267,0,0,0" FontSize="20" FontWeight="Bold">
+                <TextBox.Triggers>
+                    <EventTrigger RoutedEvent="TextBox.Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource ShiningAnimation}"/>
+                    </EventTrigger>
+                </TextBox.Triggers>
+            </TextBox>
+        </Grid>
     </Grid>
 </Window>
