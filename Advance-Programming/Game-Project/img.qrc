@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>ganj.png</file>
+        <file>ghab-dor-kart.png</file>
+        <file>arm-bazi.png</file>
+        <file>dozd-daryayi.png</file>
+        <file>malake.png</file>
+        <file>naghshe.png</file>
+        <file>name-bazi.png</file>
+        <file>neshan-jomjome.png</file>
+        <file>padeshah-jojome.png</file>
+        <file>parcham-dozd-daryayi.png</file>
+        <file>toti.png</file>
+        <file>zamin-bazi-44.png</file>
+        <file>toti-barax.png</file>
+        <file>malake44.png</file>
+        <file>naghshe44.png</file>
+        <file>ganj44.png</file>
+        <file>padeshah-jojome44.png</file>
+        <file>parcham-dozd-daryayi44.png</file>
+    </qresource>
+</RCC>
