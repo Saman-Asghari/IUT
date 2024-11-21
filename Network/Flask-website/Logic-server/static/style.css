@@ -1,0 +1,212 @@
+/*Store this code in 'style.css' file inside the 'static' folder*/
+
+/* Body Background */
+body {
+    background: linear-gradient(to right, #00cccc, #00b3b3, #009999);
+    font-family: 'Josefin Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Content Containers */
+.logincontent, .registercontent {
+    margin: 30px auto;
+    width: 400px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logincontent:hover, .registercontent:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Top Bars */
+.logintop, .registertop {
+    height: 60px;
+    width: 100%;
+    background-color: #00cccc;
+    color: #ffffff;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Boxes */
+.textbox {
+    width: calc(100% - 40px);
+    padding: 15px;
+    background-color: #00cccc;
+    border: none;
+    border-radius: 10px;
+    margin: 15px 20px;
+    color: #FFFFFF;
+    font-size: 1em;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.textbox:focus {
+    background-color: #00b3b3;
+    box-shadow: 0 0 5px rgba(0, 179, 179, 0.5);
+    outline: none;
+}
+
+::placeholder {
+    color: #FFFFFF;
+    opacity: 0.8;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn {
+    width: calc(100% - 40px);
+    padding: 15px;
+    background-color: #00cccc;
+    color: #FFFFFF;
+    font-style: oblique;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin: 15px 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #009999;
+    transform: translateY(-2px);
+}
+
+.worddark {
+    color: #00cccc;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.wordlight {
+    color: #FFFFFF;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+/* Flexbox Layout */
+.one {
+    display: flex;
+    position: relative;
+}
+
+/* Sidebar */
+.one .two {
+    width: 225px;
+    height: 100vh;
+    background: linear-gradient(145deg, #00cccc, #009999);
+    padding: 30px 0;
+    position: fixed;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
+}
+
+.one .two h1 {
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 30px;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.one .two h2 {
+    color: #fff;
+    text-align: center;
+}
+
+.one .two .active {
+    background: #007777;
+}
+
+.one .two ul li {
+    text-align: center;
+    padding: 15px;
+    border-bottom: 0.1px solid white;
+    border-top: 0.1px solid white;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.one .two ul li:hover {
+    background: #007777;
+    transform: translateX(10px);
+}
+
+.one .two ul li a {
+    color: #ffffff;
+    display: block;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.one .two ul li a .side {
+    width: 25px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Content */
+.one .content {
+    width: calc(100% - 225px);
+    margin-left: 225px;
+}
+
+.one .content .topbar {
+    text-align: center;
+    padding: 20px;
+    background: #00cccc;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 15px 15px;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.one .content .topbar:hover {
+    background-color: #009999;
+}
+
+.one .content .contentbar {
+    margin: auto;
+    padding: 20px;
+}
+
+.one .content .contentbar h1 {
+    color: #00cccc;
+    text-align: center;
+    font-style: oblique;
+    font-weight: bold;
+    font-size: 2em;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
+
+.one .content .contentbar h1:hover {
+    color: #009999;
+}
