@@ -2,6 +2,7 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include<avr/interrupt.h>
+#include<math.h>
 
 
 #define LCD_PORT PORTC     // LCD data lines connected to PORTC
@@ -204,11 +205,11 @@ void AttendanceManagement(){
       break;
     }
   }
-  LCD_Clear();
-  LCD_Number(tmpStudentCode);
   _delay_ms(200);
   if(FormatChecker(tmpStudentCode)){
     StudentCode=tmpStudentCode;
+    StudentCodes[StudentCount]=StudentCode;
+    StudentCount++;
     LCD_Clear();
     LCD_SetCursor(0,0);
     LCD_String("Student Code Accepted!");
@@ -303,11 +304,85 @@ int FormatChecker(long int StudentNumber){
   return 1; //Valid format;
 }
 
+void StudentManagement(){
+  char key;
+  long int StudentNumber=0;
+  LCD_Clear();
+  LCD_String("Enter Student Code:");
+  LCD_SetCursor(1,0);
+  LCD_String("Student Number: ");
+  while(1){
+    key=keypad_scan();
+    if(key!='o'){
+      StudentNumber=StudentNumber*10 + (key-'0');
+      LCD_Char(key);
+    }
+    else{
+      break;
+    }
+  }
+  for(int i=0;i<StudentCount;i++){
+    if(StudentNumber==StudentCodes[i]){
+      LCD_Clear();
+      LCD_String("Student Found!");
+      _delay_ms(100);
+      return;
+    }
+  }
+  LCD_Clear();
+  LCD_String("Student Not Found!");
+  _delay_ms(100);
+  return;
+}
 
+void ViewPresentStudents(){
+  //View Present Students Code
+  int Scroller=0;
+  char key;
+  LCD_Clear();
+  LCD_SetCursor(0,0);
+  LCD_String("Present Students:");
+  LCD_Number(StudentCount);
+  _delay_ms(100);
+  LCD_Clear();
+  LCD_SetCursor(0,0);
+  LCD_Number(StudentCodes[Scroller*2]);
+  LCD_SetCursor(1,0);
+  LCD_Number(StudentCodes[Scroller*2+1]);
+  while(1){
+    key=keypad_scan();
+    if(key=='0'){
+      Scroller=(Scroller+1);
+    }
+    else if(key=='8'){
+      Scroller=(Scroller-1);
+    }
+    else if(key=='o'){
+      break;
+    }
+    LCD_Clear();
+    if(Scroller*2<=StudentCount){
+      LCD_SetCursor(0,0);
+      LCD_Number(StudentCodes[Scroller*2]);
+      LCD_SetCursor(1,0);
+      LCD_Number(StudentCodes[Scroller*2+1]);
+    }
+    else{
+      if(StudentCount%2==0){
+        continue;
+      }
+      else{
+      LCD_SetCursor(0,0);
+      LCD_Number(StudentCodes[StudentCount-1]);
+      }
+    }
 
+  }
+}
 
 int main() {
     while (1) {
+      buzzer_init();
       keypad_init();
       LCD_Init();
       LCD_Clear();
@@ -316,7 +391,11 @@ int main() {
         AttendanceInitialization();
       }
       if(MenuChoice==2){
-        //Student Management
+        StudentManagement();
+      }
+      if(MenuChoice==3){
+        //View Present Students
+        ViewPresentStudents();
       }
     }
     return 0;
