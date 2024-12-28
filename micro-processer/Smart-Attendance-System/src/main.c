@@ -6,7 +6,7 @@
 #include<avr/eeprom.h>
 #include<string.h>
 
-#define F_CPU 4000000UL  // Define CPU frequency
+//#define F_CPU 4000000UL  // Define CPU frequency
 #define LCD_PORT PORTC     // LCD data lines connected to PORTC
 #define LCD_DDR  DDRC      // Data direction register for PORTC
 #define LCD_RS   0       // Register Select pin connected to PD0
@@ -483,18 +483,25 @@ void ViewPresentStudents(){
 
 void TemperatureMonitoring(){
   //Temperature Monitoring Code
+  LCD_Clear();
+  char key;
   int temp=0;
   ADMUX=0xE0;
   ADCSRA=0x87;
-  _delay_ms(10);                         // تأخیر کوتاه برای پایدار
+  _delay_ms(10);                         
   while(1){
-    ADCSRA |= (1 << ADSC);                    // شروع تبدیل
+    ADCSRA |= (1 << ADSC);                    
     while ((ADCSRA & (1 << ADIF))==0);
     if(ADCH != temp || 1){
       temp=ADCH;
-      LCD_Number(temp);                    // Clear ADIF
+      LCD_Number(temp);
+      LCD_SetCursor(1,0);
+      LCD_String("1.continue or 2.exit");
+      key=keypad_scan();
+      if(key=='2'){
+        return ;
+      }                                     
     }
-    _delay_ms(1000);
     LCD_Clear();
   }
 }
@@ -537,6 +544,8 @@ void longToString(long int num, char *str) {
 void USART_send_Long_array(long int arr[], int size){
   char buffer[10];
   for(int i=0;i<size;i++){
+    if(arr[i]==0) 
+      continue;
     longToString(arr[i], buffer);
     LCD_Clear();
     LCD_String("Student Code: ");
@@ -560,7 +569,7 @@ void retrieveStudentData(){
     LCD_Number(StudentCodes[i]);
     _delay_ms(500);
   }
-  USART_send_Long_array(StudentCodes,2);
+  USART_send_Long_array(StudentCodes,100);
 }
 
 void TrafficMonitoring(){
