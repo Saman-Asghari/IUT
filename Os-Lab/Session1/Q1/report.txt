@@ -1,0 +1,41 @@
+total 76
+lrwxrwxrwx   1 root root     7 سپتامبر 23 18:32 bin -> usr/bin
+drwxr-xr-x   5 root root  4096 سپتامبر 28 13:58 boot
+drwxr-xr-x   2 root root  4096 سپتامبر 23 18:37 cdrom
+drwxr-xr-x  19 root root  4500 اوْکتوْبر  2 13:28 dev
+drwxr-xr-x 134 root root 12288 اوْکتوْبر  1 16:51 etc
+drwxr-xr-x   6 root root  4096 اوْکتوْبر  1 15:38 home
+lrwxrwxrwx   1 root root     7 سپتامبر 23 18:32 lib -> usr/lib
+lrwxrwxrwx   1 root root     9 سپتامبر 23 18:32 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root     9 سپتامبر 23 18:32 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root    10 سپتامبر 23 18:32 libx32 -> usr/libx32
+drwx------   2 root root 16384 سپتامبر 23 18:32 lost+found
+drwxr-xr-x   2 root root  4096 سپتامبر 11 17:48 media
+drwxr-xr-x   2 root root  4096 سپتامبر 11 17:48 mnt
+drwxr-xr-x   2 root root  4096 سپتامبر 11 17:48 opt
+dr-xr-xr-x 257 root root     0 اوْکتوْبر  2 13:27 proc
+drwx------   7 root root  4096 اوْکتوْبر  1 16:51 root
+drwxr-xr-x  32 root root   880 اوْکتوْبر  2 13:31 run
+lrwxrwxrwx   1 root root     8 سپتامبر 23 18:32 sbin -> usr/sbin
+drwxr-xr-x  11 root root  4096 سپتامبر 29 16:18 snap
+drwxr-xr-x   2 root root  4096 سپتامبر 11 17:48 srv
+dr-xr-xr-x  13 root root     0 اوْکتوْبر  2 13:27 sys
+drwxrwxrwt  14 root root  4096 اوْکتوْبر  2 13:34 tmp
+drwxr-xr-x  14 root root  4096 سپتامبر 11 17:48 usr
+drwxr-xr-x  14 root root  4096 سپتامبر 11 17:54 var
+
+sys and proc dont have a permission for writing 
+some starts with d because it is a directory
+some starts with l becuase it is a symbolic link
+
+the var,usr,srv,snap,run,opt,mnt,media,home,etc,dev,cdrom,boot doesnt have a writing acsess to groups and others
+
+--------------------------------------------------
+Access: (0664/-rw-rw-r--)  Uid: ( 1000/ oslab05)   Gid: ( 1000/ oslab05)
+Access: 2024-10-02 15:30:13.129045351 +0330
+
+-------------------------------------------------------
+Access: (0664/-rw-rw-r--)  Uid: ( 1000/ oslab05)   Gid: ( 1000/ oslab05)
+Access: 2024-10-02 15:39:04.598039185 +0330
+------------------------------------------------------
+

@@ -1,0 +1,20 @@
+bash.bashrc
+bash_completion
+bash_completion.d
+
+-------------------------------
+
+# check the window size after each command and, if necessary,
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+# but only if not SUDOing and have SUDO_PS1 set; then assume smart user.
+if ! [ -n "${SUDO_USER}" -a -n "${SUDO_PS1}" ]; then
+#if ! shopt -oq posix; then
+#  if [ -f /usr/share/bash-completion/bash_completion ]; then
+#  elif [ -f /etc/bash_completion ]; then
+if [ ! -e "$HOME/.sudo_as_admin_successful" ] && [ ! -e "$HOME/.hushlogin" ] ; then
+    if [ -x /usr/bin/sudo ]; then
+# if the command-not-found package is installed, use it
+if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-not-found ]; then
+                if [ -x /usr/lib/command-not-found ]; then
+                elif [ -x /usr/share/command-not-found/command-not-found ]; then

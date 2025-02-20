@@ -1,0 +1,83 @@
+1-1
+
+total 2097232
+lrwxrwxrwx   1 root root          7 سپتامبر 22 18:44 bin -> usr/bin
+drwxr-xr-x   4 root root       4096 سپتامبر 29 15:32 boot
+drwxr-xr-x   2 root root       4096 سپتامبر 22 18:48 cdrom
+drwxr-xr-x  20 root root       4460 اوْکتوْبر  2 13:28 dev
+drwxr-xr-x 134 root root      12288 اوْکتوْبر  2 11:17 etc
+drwxr-xr-x   5 root root       4096 اوْکتوْبر  1 16:21 home
+lrwxrwxrwx   1 root root          7 سپتامبر 22 18:44 lib -> usr/lib
+lrwxrwxrwx   1 root root          9 سپتامبر 22 18:44 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root          9 سپتامبر 22 18:44 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root         10 سپتامبر 22 18:44 libx32 -> usr/libx32
+drwx------   2 root root      16384 سپتامبر 22 18:43 lost+found
+drwxr-xr-x   2 root root       4096 سپتامبر 11 17:48 media
+drwxr-xr-x   2 root root       4096 سپتامبر 11 17:48 mnt
+drwxr-xr-x   2 root root       4096 سپتامبر 11 17:48 opt
+dr-xr-xr-x 257 root root          0 اوْکتوْبر  2 13:27 proc
+drwx------   8 root root       4096 اوْکتوْبر  2 09:44 root
+drwxr-xr-x  32 root root        880 اوْکتوْبر  2 13:31 run
+lrwxrwxrwx   1 root root          8 سپتامبر 22 18:44 sbin -> usr/sbin
+drwxr-xr-x   9 root root       4096 سپتامبر 11 17:55 snap
+drwxr-xr-x   2 root root       4096 سپتامبر 11 17:48 srv
+-rw-------   1 root root 2147483648 سپتامبر 22 18:44 swapfile
+dr-xr-xr-x  13 root root          0 اوْکتوْبر  2 13:27 sys
+drwxrwxrwt  14 root root       4096 اوْکتوْبر  2 13:34 tmp
+drwxr-xr-x  14 root root       4096 سپتامبر 11 17:48 usr
+drwxr-xr-x  14 root root       4096 سپتامبر 11 17:54 var
+
+1-2
+<sys> and <proc> have no write permission
+
+1-3
+d is for directory and l is for symbolic link
+
+1-4
+<root> and <lost+found> directory's have no read option for <group> and <others> 
+
+1-5
+Access: 2024-10-02 15:28:55.047527264 +0330
+
+1-6
+Access: 2024-10-02 15:35:43.884502096 +0330
+
+1-7
+-r--r--r-- 1 oslab06 oslab06   34 اوْکتوْبر  2 15:35 myfile
+
+1-8
+
+  File: otherFile
+  Size: 0         	Blocks: 0          IO Block: 4096   regular empty file
+Device: 815h/2069d	Inode: 2752531     Links: 1
+Access: (0664/-rw-rw-r--)  Uid: ( 1000/ oslab06)   Gid: ( 1000/ oslab06)
+Access: 2024-04-02 00:00:00.000000000 +0330
+Modify: 2024-10-02 15:45:37.345465562 +0330
+Change: 2024-10-02 15:45:37.345465562 +0330
+ Birth: 2024-10-02 15:45:37.345465562 +0330
+
+2-1
+inet 172.21.49.217  netmask 255.255.255.0  broadcast 172.21.49.255
+
+2-2
+PING 172.21.49.63 (172.21.49.63) 56(84) bytes of data.
+64 bytes from 172.21.49.63: icmp_seq=1 ttl=64 time=0.968 ms
+64 bytes from 172.21.49.63: icmp_seq=2 ttl=64 time=0.508 ms
+64 bytes from 172.21.49.63: icmp_seq=3 ttl=64 time=0.510 ms
+64 bytes from 172.21.49.63: icmp_seq=4 ttl=64 time=0.493 ms
+64 bytes from 172.21.49.63: icmp_seq=5 ttl=64 time=0.532 ms
+64 bytes from 172.21.49.63: icmp_seq=6 ttl=64 time=0.480 ms
+64 bytes from 172.21.49.63: icmp_seq=7 ttl=64 time=0.363 ms
+64 bytes from 172.21.49.63: icmp_seq=8 ttl=64 time=0.444 ms
+64 bytes from 172.21.49.63: icmp_seq=9 ttl=64 time=0.514 ms
+64 bytes from 172.21.49.63: icmp_seq=10 ttl=64 time=0.451 ms
+64 bytes from 172.21.49.63: icmp_seq=11 ttl=64 time=0.566 ms
+64 bytes from 172.21.49.63: icmp_seq=12 ttl=64 time=0.374 ms
+64 bytes from 172.21.49.63: icmp_seq=13 ttl=64 time=0.529 ms
+^C
+--- 172.21.49.63 ping statistics ---
+13 packets transmitted, 13 received, 0% packet loss, time 12254ms
+rtt min/avg/max/mdev = 0.363/0.517/0.968/0.141 ms
+
+
+

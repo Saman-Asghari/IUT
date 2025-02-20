@@ -1,0 +1,10 @@
+sudo apt search neofetch
+-------------------------------------
+ls /etc/ | grep "bash" >> report.txt
+--------------------------------------
+grep "if" /etc/bash.bashrc >> report.txt
+-----------------------------------------
+vim /etc/bash.bashrc
+---------------------------------------
+it runs the neofettch !!!!
+
