@@ -92,14 +92,42 @@ class Scanner:
       self.errors.append((self.line_number,'(*/,unmatched comment)'))
       self.current_pos+=2
       return True
-      
+
     return False
-  def process_number():
-    None
+  def process_number(self):
+    start_pos = self.current_pos
+    while self.has_more_chars() and self.current_line[self.current_pos].isdigit():
+      self.current_pos+=1
+        
+    if self.has_more_chars() and self.current_line[self.current_pos].isalpha():
+      invalid_part=self.current_line[start_pos:self.current_pos+1]
+      self.errors.append((self.line_number, f'({invalid_part},Invalid number)'))
+      self.skip_invalid_input(True)
+      return
+        
+    num_str=self.current_line[start_pos:self.current_pos]
+    self._add_token(TokenType.NUM, num_str)
 
 
   def process_identifier():
-    None
+    start_pos=self.current_pos
+    while (self.has_more_chars() and (self.current_line[self.current_pos].isalnum() or self.current_line[self.current_pos]=='_')):
+      self.current_pos+=1
+    
+    if (self.has_more_chars() and not self.current_line[self.current_pos].isspace() and self.current_line[self.current_pos] not in SYMBOLS and self.current_line[self.current_pos] not in {'/', '*'}):
+      invalid_part=self.current_line[start_pos:self.current_pos+1]
+      self.errors.append((self.line_number,f'({invalid_part} ,invalid input)'))
+      self.skip_invalid_input(False)
+      return
+
+    id_str=self.current_line[start_pos:self.current_pos]
+
+    if id_str in KEYWORDS:
+      self.add_token(TokenType.KEYWORD,id_str)
+    else:
+      self.add_token(TokenType.ID,id_str)
+      if id_str not in self.symbol_table:
+        self.symbol_table[id_str] = id_str
   
 
   def process_symbol():
@@ -120,7 +148,7 @@ class Scanner:
   def peek_next_char():
     None
   
-  def has_more_char():
+  def has_more_chars():
     None
 
 
