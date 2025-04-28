@@ -80,7 +80,7 @@ class Scanner:
     
     #comment end
     if self.in_comment:
-      if char=='*' and self._peek_next_char()=='/':
+      if char=='*' and self.peek_next_char()=='/':
         self.in_comment=False
         self.current_pos+=2
       else:
@@ -88,7 +88,7 @@ class Scanner:
       return True
 
     #unmatched comments
-    if char=='*' and self._peek_next_char()=='/':
+    if char=='*' and self.peek_next_char()=='/':
       self.errors.append((self.line_number,'(*/,unmatched comment)'))
       self.current_pos+=2
       return True
@@ -106,10 +106,10 @@ class Scanner:
       return
         
     num_str=self.current_line[start_pos:self.current_pos]
-    self._add_token(TokenType.NUM, num_str)
+    self.add_token(TokenType.NUM, num_str)
 
 
-  def process_identifier():
+  def process_identifier(self):
     start_pos=self.current_pos
     while (self.has_more_chars() and (self.current_line[self.current_pos].isalnum() or self.current_line[self.current_pos]=='_')):
       self.current_pos+=1
@@ -130,25 +130,64 @@ class Scanner:
         self.symbol_table[id_str] = id_str
   
 
-  def process_symbol():
-    None
+  def process_symbol(self):
+    char=self.current_line[self.current_pos]
+    next_char=self.peek_next_char()
+    if char == '=' and next_char =='#':
+      self.errors.append((self.line_number, '(=#, Invalid input)'))
+      self.current_pos+=2
+      return
+
+    if char == '/' and next_char == '/':
+      self.errors.append((self.line_number, '(/, Invalid input)'))
+      self.errors.append((self.line_number, '(/, Invalid input)'))
+      self.current_pos += 2
+      return
+    
+    two_char = char + next_char if next_char else char
+    if two_char in {'+=', '*=', '/=', '-=', '<=', '==', '!=', '/*', '*/'}:
+      if two_char in SYMBOLS:
+        self.add_token(TokenType.SYMBOL, two_char)
+        self.current_pos += 2
+        return
+    
+    if char in SYMBOLS:
+      self.add_token(TokenType.SYMBOL, char)
+      self.current_pos += 1
   
-  def process_invalid_char():
-    None
+  def process_invalid_char(self,char):
+    self.errors.append((self.line_number, f'({char}, Invalid input)'))
+    self.current_pos += 1
+    self.skip_invalid_input(False)
   
-  def skip_invalid_input():
-    None
+  def skip_invalid_input(self,is_invalid_number):
+    if is_invalid_number:
+      self.current_pos += 1
+            
+    while self.has_more_chars():
+      char = self.current_line[self.current_pos]
+      if char.isspace() or char in SYMBOLS or char.isalnum():
+        break
+      self.current_pos += 1
   
-  def add_token():
-    None
+  def add_token(self, token_type, token_value):
+    self.tokens.append((self.line_number, (token_type, token_value)))
   
-  def check_for_unclosed_comment():
-    None
+  def check_for_unclosed_comment(self):
+    if self.in_comment:
+      comment_content = self.input_lines[self.comment_start_line - 1][self.comment_content_start:]
+      preview = comment_content[:5]
+      if len(preview) < len(comment_content):
+        preview += "..."
+      self.errors.append((self.comment_start_line, f'(/*{preview}, Unclosed comment)'))
+    
+  def peek_next_char(self):
+    if self.current_pos + 1 < len(self.current_line):
+      return self.current_line[self.current_pos + 1]
+    return None
   
-  def peek_next_char():
-    None
-  
-  def has_more_chars():
-    None
+  def has_more_chars(self):
+    return self.current_pos < len(self.current_line)
+
 
 
